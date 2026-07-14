@@ -24,7 +24,10 @@ export default async function Board() {
   const canDelete = authed && !!me && canDeleteMatches(me.id)
   const messages = await getMessages()
   const boardMe = authed && me ? { id: me.id, name: me.name } : null
-  const practiceStats = ['SFC', 'QofE'].map((grp) => {
+  const practiceOrder = ['SFC', 'QofE', 'FALS']
+  const practiceGroups = [...new Set(standings.map((p) => p.practice))]
+    .sort((a, b) => (practiceOrder.indexOf(a) + 1 || 99) - (practiceOrder.indexOf(b) + 1 || 99))
+  const practiceStats = practiceGroups.map((grp) => {
     const ps = standings.filter((p) => p.practice === grp)
     return {
       grp, n: ps.length,
@@ -129,7 +132,7 @@ export default async function Board() {
               </div>
             )}
             <div className="card">
-              <div className="card-head"><span className="card-title">Practice — SFC vs QofE</span></div>
+              <div className="card-head"><span className="card-title">Practice Breakdown</span></div>
               <div className="pad" style={{ paddingTop: 10 }}>
                 {practiceStats.map((g) => (
                   <div className="item" key={g.grp}>

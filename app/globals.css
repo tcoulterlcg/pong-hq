@@ -80,6 +80,7 @@ a.board-link:hover { background: rgba(63,124,192,.10); }
 .practice-tag { display: inline-block; font-size: 9.5px; font-weight: 800; letter-spacing: .05em; padding: 1px 6px; border-radius: 4px; vertical-align: middle; border: 1px solid; }
 .practice-tag.sfc { color: #8fd0ff; border-color: rgba(63,124,192,.5); background: rgba(63,124,192,.15); }
 .practice-tag.qofe { color: #ffd089; border-color: rgba(245,185,66,.5); background: rgba(245,185,66,.15); }
+.practice-tag.fals { color: #7ee0b8; border-color: rgba(45,191,113,.5); background: rgba(45,191,113,.15); }
 .player-practice { position: absolute; top: 10px; right: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.4); }
 
 /* player match-log result chip */
