@@ -132,7 +132,7 @@ export default async function Board() {
               </div>
             </div>
             <div className="card">
-              <div className="card-head"><span className="card-title">Recent Matches</span><span className="muted" style={{ fontSize: 11 }}>{matches.length} shown</span></div>
+              <div className="card-head"><Link href="/matches" className="card-title" style={{ color: 'var(--accent-hi, #6ea3d8)', textDecoration: 'none' }}>Recent Matches →</Link><Link href="/matches" className="muted" style={{ fontSize: 11 }}>view all</Link></div>
               <div className="pad" style={{ paddingTop: 6 }}>
                 {matches.length === 0 && <p className="muted" style={{ fontSize: 13 }}>No matches yet — the ladder sits at its seeded order.</p>}
                 {matches.map((m) => (

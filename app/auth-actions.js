@@ -1,13 +1,11 @@
 'use server'
-// Sign-in: any player on the ladder + the shared passcode. Submit rights are
-// checked separately when recording (view-only players sign in but can't
-// record). Same cookie names as the recon site, so on localhost signing in
-// on either app covers both.
+// Sign-in: just pick your name — no passcode (this is a fun office ladder, not
+// sensitive data). Submit rights are still checked when recording (view-only
+// players sign in but can't record).
 import { cookies } from 'next/headers'
 import { getPlayers } from '../lib/pingpong.mjs'
 
-export async function signIn(playerId, passcode) {
-  if (!passcode || passcode !== (process.env.PONG_PASSCODE || 'lcg-recon')) return { ok: false, error: 'Incorrect passcode.' }
+export async function signIn(playerId) {
   const players = await getPlayers()
   const p = players.find((x) => x.id === playerId)
   if (!p) return { ok: false, error: 'Select your name.' }
