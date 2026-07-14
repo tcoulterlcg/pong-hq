@@ -32,7 +32,10 @@ export default async function Players() {
           <h1>The <span className="accent">Players</span></h1>
           <div className="sub">LCG Advisors office roster · card order follows the live rankings</div>
         </div>
-        <div className="sub"><Link href="/">← Rankings board</Link></div>
+        <div className="sub" style={{ display: 'flex', gap: 16 }}>
+          <Link href="/">← Rankings board</Link>
+          <Link href="/smack">Smack Talk →</Link>
+        </div>
       </div>
 
       <div className="players-grid">

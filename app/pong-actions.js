@@ -29,3 +29,21 @@ export async function removeMatch(id) {
   if (res.ok) revalidatePath('/')
   return res
 }
+
+// Smack talk: any signed-in player may post (view-only players included);
+// delete = your own posts, or any post if you're the match admin.
+export async function postMessage(body, targetId) {
+  const p = await actor()
+  if (!p) return { ok: false, error: 'Sign in to talk smack.' }
+  const res = await PP.postMessage(p.id, p.name, body, targetId || null)
+  if (res.ok) revalidatePath('/smack')
+  return res
+}
+
+export async function deleteMessage(id) {
+  const p = await actor()
+  if (!p) return { ok: false, error: 'Sign in first.' }
+  const res = await PP.removeMessage(id, p.id)
+  if (res.ok) revalidatePath('/smack')
+  return res
+}

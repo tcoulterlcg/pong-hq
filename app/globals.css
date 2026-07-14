@@ -70,6 +70,13 @@ a { color: var(--accent); text-decoration: none; }
 .login-wrap { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
 .login-card { width: 100%; max-width: 360px; }
 
+/* smack talk board */
+.smack-item { padding: 11px 0; border-bottom: 1px solid var(--inner); }
+.smack-item:last-child { border-bottom: none; }
+.smack-head { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.smack-target { color: var(--accent-hi, #6ea3d8); font-weight: 700; font-size: 12.5px; }
+.smack-body { margin-top: 4px; font-size: 14px; color: var(--text2); white-space: pre-wrap; overflow-wrap: anywhere; }
+
 /* players roster (lcgadvisors.com/team-style card grid) */
 .players-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
 .player-card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
