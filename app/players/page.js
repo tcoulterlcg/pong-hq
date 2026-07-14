@@ -34,17 +34,18 @@ export default async function Players() {
         </div>
         <div className="sub" style={{ display: 'flex', gap: 16 }}>
           <Link href="/">← Rankings board</Link>
-          <Link href="/smack">Smack Talk →</Link>
+          <Link href="/board">Message Board →</Link>
         </div>
       </div>
 
       <div className="players-grid">
         {cards.map((p) => (
-          <div className="player-card" key={p.id}>
+          <Link className="player-card" key={p.id} href={`/player/${p.id}`}>
             <div className="player-photo">
               {p.img
                 ? <img src={p.img} alt={`${p.fullName} — ping pong portrait`} />
                 : <span className="player-photo-fallback">🏓</span>}
+              <span className={`practice-tag ${p.practice.toLowerCase()} player-practice`}>{p.practice}</span>
             </div>
             <div className="player-meta">
               <div className="player-name">{p.fullName}</div>
@@ -55,7 +56,7 @@ export default async function Players() {
               <span className="rating" style={{ fontSize: 15 }}>{p.rating}</span>
               <span style={{ marginLeft: 'auto' }}><span style={{ color: 'var(--green)' }}>{p.wins}</span>–<span style={{ color: 'var(--red)' }}>{p.losses}</span></span>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

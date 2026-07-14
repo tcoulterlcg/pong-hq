@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
-import { getStandings, getMatches, canDeleteMatches } from '../lib/pingpong.mjs'
+import { getStandings, getMatches, getMessages, canDeleteMatches, MATCH_ADMIN } from '../lib/pingpong.mjs'
 import RecordPanel from '../components/RecordPanel'
 import RemoveMatchButton from '../components/RemoveMatchButton'
+import MessageBoardSection from '../components/MessageBoardSection'
 import LcgLogo from '../components/LcgLogo'
 
 export const dynamic = 'force-dynamic' // always reflect the shared ledger
@@ -21,6 +22,17 @@ export default async function Board() {
   const me = standings.find((p) => p.id === ruId) || null
   const canRecord = authed && !!me?.can_submit
   const canDelete = authed && !!me && canDeleteMatches(me.id)
+  const messages = await getMessages()
+  const boardMe = authed && me ? { id: me.id, name: me.name } : null
+  const practiceStats = ['SFC', 'QofE'].map((grp) => {
+    const ps = standings.filter((p) => p.practice === grp)
+    return {
+      grp, n: ps.length,
+      wins: ps.reduce((s, p) => s + p.wins, 0),
+      losses: ps.reduce((s, p) => s + p.losses, 0),
+      avg: ps.length ? Math.round(ps.reduce((s, p) => s + p.rating, 0) / ps.length) : 0,
+    }
+  })
 
   // Panels — all derived from the ledger
   const biggestUpset = [...matches].sort((a, b) => (b.delta || 0) - (a.delta || 0))[0] || null
@@ -56,7 +68,7 @@ export default async function Board() {
           </div>
           <div className="sub" style={{ display: 'flex', gap: 16 }}>
             <Link href="/players">Players →</Link>
-            <Link href="/smack">Smack Talk →</Link>
+            <Link href="#board">Message Board ↓</Link>
             {authed && me
               ? <span>Signed in: <b style={{ color: 'var(--text2)' }}>{me.name}</b>{!me.can_submit && ' (view-only)'}</span>
               : <Link href="/login">Player sign-in →</Link>}
@@ -94,16 +106,16 @@ export default async function Board() {
               <span className="r">W–L</span><span className="r">GP</span><span className="r">Win %</span><span className="r">Streak</span><span className="r">Move</span>
             </div>
             {standings.map((p) => (
-              <div className="board-row" key={p.id}>
+              <Link className="board-row board-link" key={p.id} href={`/player/${p.id}`}>
                 <span><span className={`rank-chip ${medal(p.rank)}`}>{p.rank}</span></span>
-                <span className="pname">{medalEmoji(p.rank)} {p.name}</span>
+                <span className="pname">{medalEmoji(p.rank)} {p.name} <span className={`practice-tag ${p.practice.toLowerCase()}`}>{p.practice}</span></span>
                 <span className="r rating num">{p.rating}</span>
                 <span className="r num"><span style={{ color: 'var(--green)' }}>{p.wins}</span>–<span style={{ color: 'var(--red)' }}>{p.losses}</span></span>
                 <span className="r num">{p.games}</span>
                 <span className="r num">{p.winPct == null ? '—' : `${p.winPct}%`}</span>
                 <span className="r num" style={{ color: p.streak > 0 ? 'var(--green)' : p.streak < 0 ? 'var(--red)' : 'var(--mut2)' }}>{fmtStreak(p.streak)}</span>
                 <span className={`r mv ${p.move}`}>{p.move === 'same' ? '—' : p.move === 'up' ? '▲' : '▼'}</span>
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -116,6 +128,20 @@ export default async function Board() {
                 </div>
               </div>
             )}
+            <div className="card">
+              <div className="card-head"><span className="card-title">Practice — SFC vs QofE</span></div>
+              <div className="pad" style={{ paddingTop: 10 }}>
+                {practiceStats.map((g) => (
+                  <div className="item" key={g.grp}>
+                    <span><span className={`practice-tag ${g.grp.toLowerCase()}`}>{g.grp}</span> <span className="muted" style={{ fontSize: 12 }}>{g.n} player{g.n === 1 ? '' : 's'}</span></span>
+                    <span className="num" style={{ fontSize: 13 }}>
+                      <span style={{ color: 'var(--green)' }}>{g.wins}</span>–<span style={{ color: 'var(--red)' }}>{g.losses}</span>
+                      <span className="muted"> · avg </span><b>{g.avg}</b>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
             <div className="card">
               <div className="card-head"><span className="card-title">Recent Matches</span><span className="muted" style={{ fontSize: 11 }}>{matches.length} shown</span></div>
               <div className="pad" style={{ paddingTop: 6 }}>
@@ -132,6 +158,10 @@ export default async function Board() {
               </div>
             </div>
           </div>
+        </div>
+
+        <div style={{ marginTop: 18 }}>
+          <MessageBoardSection me={boardMe} players={standings.map((p) => ({ id: p.id, name: p.name }))} messages={messages} matchAdmin={MATCH_ADMIN} />
         </div>
 
       </div>
