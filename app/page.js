@@ -48,9 +48,9 @@ export default async function Board() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
               <LcgLogo height={30} />
-              <span className="brand-chip">Table Tennis HQ</span>
+              <span className="brand-chip">Table Tennis Stats</span>
             </div>
-            <h1>Office <span className="accent">Ladder</span></h1>
+            <h1>Office <span className="accent">Rankings</span></h1>
             <div className="sub">LCG Advisors · Elo K=32, everyone starts 1500 · live from the match ledger (shared with Reconciliation HQ)</div>
           </div>
           <div className="sub">
@@ -58,10 +58,30 @@ export default async function Board() {
           </div>
         </div>
 
+        <div className="stat-tiles">
+          <div className="stat-tile">
+            <div className="lbl">Biggest Rating Swing</div>
+            <div className="val">{biggestUpset ? `${biggestUpset.winnerName} def. ${biggestUpset.loserName}` : '—'}</div>
+            <div className="sub">{biggestUpset ? `+${biggestUpset.delta} rating · ${fmtWhen(biggestUpset.at)}` : 'no matches recorded'}</div>
+          </div>
+          <div className="stat-tile">
+            <div className="lbl">Longest Active Streak</div>
+            <div className="val" style={{ color: longestStreak?.streak > 0 ? 'var(--green)' : longestStreak?.streak < 0 ? 'var(--red)' : undefined }}>
+              {longestStreak && longestStreak.streak !== 0 ? `${longestStreak.name} · ${fmtStreak(longestStreak.streak)}` : '—'}
+            </div>
+            <div className="sub">wins or losses in a row</div>
+          </div>
+          <div className="stat-tile">
+            <div className="lbl">Most Games Played</div>
+            <div className="val">{mostGames && mostGames.games > 0 ? `${mostGames.name} · ${mostGames.games}` : '—'}</div>
+            <div className="sub">lifetime matches on the ledger</div>
+          </div>
+        </div>
+
         <div className="grid">
           <div className="card">
             <div className="card-head">
-              <span className="card-title">The Ladder</span>
+              <span className="card-title">Top 15 Rankings</span>
               <span className="muted" style={{ fontSize: 11 }}>{standings.reduce((s, p) => s + p.wins, 0)} matches played</span>
             </div>
             <div className="board-row hdr">
@@ -105,25 +125,6 @@ export default async function Board() {
           </div>
         </div>
 
-        <div className="stat-tiles">
-          <div className="stat-tile">
-            <div className="lbl">Biggest Rating Swing</div>
-            <div className="val">{biggestUpset ? `${biggestUpset.winnerName} def. ${biggestUpset.loserName}` : '—'}</div>
-            <div className="sub">{biggestUpset ? `+${biggestUpset.delta} rating · ${fmtWhen(biggestUpset.at)}` : 'no matches recorded'}</div>
-          </div>
-          <div className="stat-tile">
-            <div className="lbl">Longest Active Streak</div>
-            <div className="val" style={{ color: longestStreak?.streak > 0 ? 'var(--green)' : longestStreak?.streak < 0 ? 'var(--red)' : undefined }}>
-              {longestStreak && longestStreak.streak !== 0 ? `${longestStreak.name} · ${fmtStreak(longestStreak.streak)}` : '—'}
-            </div>
-            <div className="sub">wins or losses in a row</div>
-          </div>
-          <div className="stat-tile">
-            <div className="lbl">Most Games Played</div>
-            <div className="val">{mostGames && mostGames.games > 0 ? `${mostGames.name} · ${mostGames.games}` : '—'}</div>
-            <div className="sub">lifetime matches on the ledger</div>
-          </div>
-        </div>
       </div>
     </>
   )
