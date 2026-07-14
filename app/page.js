@@ -4,6 +4,7 @@ import { getStandings, getMatches, getMessages, canDeleteMatches, MATCH_ADMIN } 
 import RecordPanel from '../components/RecordPanel'
 import RemoveMatchButton from '../components/RemoveMatchButton'
 import MessageBoardSection from '../components/MessageBoardSection'
+import RankingsBoard from '../components/RankingsBoard'
 import LcgLogo from '../components/LcgLogo'
 
 export const dynamic = 'force-dynamic' // always reflect the shared ledger
@@ -104,22 +105,7 @@ export default async function Board() {
               <span className="card-title">Top 15 Rankings</span>
               <span className="muted" style={{ fontSize: 11 }}>{standings.reduce((s, p) => s + p.wins, 0)} matches played</span>
             </div>
-            <div className="board-row hdr">
-              <span>Rank</span><span>Player</span><span className="r">Rating</span>
-              <span className="r">W–L</span><span className="r">GP</span><span className="r">Win %</span><span className="r">Streak</span><span className="r">Move</span>
-            </div>
-            {standings.map((p) => (
-              <Link className="board-row board-link" key={p.id} href={`/player/${p.id}`}>
-                <span><span className={`rank-chip ${medal(p.rank)}`}>{p.rank}</span></span>
-                <span className="pname">{medalEmoji(p.rank)} {p.name} <span className={`practice-tag ${p.practice.toLowerCase()}`}>{p.practice}</span></span>
-                <span className="r rating num">{p.rating}</span>
-                <span className="r num"><span style={{ color: 'var(--green)' }}>{p.wins}</span>–<span style={{ color: 'var(--red)' }}>{p.losses}</span></span>
-                <span className="r num">{p.games}</span>
-                <span className="r num">{p.winPct == null ? '—' : `${p.winPct}%`}</span>
-                <span className="r num" style={{ color: p.streak > 0 ? 'var(--green)' : p.streak < 0 ? 'var(--red)' : 'var(--mut2)' }}>{fmtStreak(p.streak)}</span>
-                <span className={`r mv ${p.move}`}>{p.move === 'same' ? '—' : p.move === 'up' ? '▲' : '▼'}</span>
-              </Link>
-            ))}
+            <RankingsBoard rows={standings.map((p) => ({ id: p.id, name: p.name, rank: p.rank, rating: p.rating, wins: p.wins, losses: p.losses, winPct: p.winPct, streak: p.streak, move: p.move, games: p.games, practice: p.practice }))} />
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
