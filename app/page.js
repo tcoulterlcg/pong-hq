@@ -55,7 +55,9 @@ export default async function Board() {
           </div>
           <div className="sub" style={{ display: 'flex', gap: 16 }}>
             <Link href="/players">Players →</Link>
-            {canRecord ? <span>Signed in: <b style={{ color: 'var(--text2)' }}>{me.name}</b></span> : <Link href="/login">Player sign-in →</Link>}
+            {authed && me
+              ? <span>Signed in: <b style={{ color: 'var(--text2)' }}>{me.name}</b>{!me.can_submit && ' (view-only)'}</span>
+              : <Link href="/login">Player sign-in →</Link>}
           </div>
         </div>
 
