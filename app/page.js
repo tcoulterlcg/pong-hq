@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { getStandings, getMatches, canDeleteMatches } from '../lib/pingpong.mjs'
 import RecordPanel from '../components/RecordPanel'
+import RemoveMatchButton from '../components/RemoveMatchButton'
 import LcgLogo from '../components/LcgLogo'
 
 export const dynamic = 'force-dynamic' // always reflect the shared ledger
@@ -9,7 +10,7 @@ export const dynamic = 'force-dynamic' // always reflect the shared ledger
 const medal = (r) => (r === 1 ? 'gold' : r === 2 ? 'silver' : r === 3 ? 'bronze' : '')
 const medalEmoji = (r) => (r === 1 ? '🥇' : r === 2 ? '🥈' : r === 3 ? '🥉' : '')
 const fmtStreak = (s) => (s === 0 ? '—' : s > 0 ? `W${s}` : `L${-s}`)
-const fmtWhen = (iso) => new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+const fmtWhen = (iso) => new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' })
 
 export default async function Board() {
   const ck = await cookies()
@@ -90,7 +91,7 @@ export default async function Board() {
             </div>
             <div className="board-row hdr">
               <span>Rank</span><span>Player</span><span className="r">Rating</span>
-              <span className="r">W–L</span><span className="r">Win %</span><span className="r">Streak</span><span className="r">Move</span>
+              <span className="r">W–L</span><span className="r">GP</span><span className="r">Win %</span><span className="r">Streak</span><span className="r">Move</span>
             </div>
             {standings.map((p) => (
               <div className="board-row" key={p.id}>
@@ -98,6 +99,7 @@ export default async function Board() {
                 <span className="pname">{medalEmoji(p.rank)} {p.name}</span>
                 <span className="r rating num">{p.rating}</span>
                 <span className="r num"><span style={{ color: 'var(--green)' }}>{p.wins}</span>–<span style={{ color: 'var(--red)' }}>{p.losses}</span></span>
+                <span className="r num">{p.games}</span>
                 <span className="r num">{p.winPct == null ? '—' : `${p.winPct}%`}</span>
                 <span className="r num" style={{ color: p.streak > 0 ? 'var(--green)' : p.streak < 0 ? 'var(--red)' : 'var(--mut2)' }}>{fmtStreak(p.streak)}</span>
                 <span className={`r mv ${p.move}`}>{p.move === 'same' ? '—' : p.move === 'up' ? '▲' : '▼'}</span>
@@ -121,7 +123,10 @@ export default async function Board() {
                 {matches.map((m) => (
                   <div className="item" key={m.id}>
                     <span><b>{m.winnerName}</b> def. {m.loserName} <span className="muted" style={{ fontSize: 11 }}>· {fmtWhen(m.at)} · by {m.by}</span></span>
-                    <span className="num" style={{ color: 'var(--green)', fontWeight: 700 }}>{m.delta == null ? '' : `+${m.delta}`}</span>
+                    <span style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}>
+                      <span className="num" style={{ color: 'var(--green)', fontWeight: 700 }}>{m.delta == null ? '' : `+${m.delta}`}</span>
+                      {canDelete && <RemoveMatchButton id={m.id} label={`${m.winnerName} def. ${m.loserName}${m.delta == null ? '' : ` (+${m.delta})`}`} />}
+                    </span>
                   </div>
                 ))}
               </div>

@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 
 export const metadata = { title: 'Smack Talk — Office Ping Pong Stats' }
 
-const fmtWhen = (iso) => new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+const fmtWhen = (iso) => new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' })
 
 export default async function Smack() {
   const ck = await cookies()
