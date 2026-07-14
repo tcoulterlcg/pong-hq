@@ -277,6 +277,7 @@ const PLAYERS = {
   cedric: { bg: 'navy', bgStyle: 'rays', skin: 'deep', hair: ['afro', 'black'], band: ['#c0392b', '#f0f3f7'], eyes: 'wide', mouth: 'grin', jersey: ['track', '#8c6d1f'], pose: 'raise', extra: 'chain' },
   caleb: { bg: 'teal', bgStyle: 'dots', skin: 'fair', hair: ['mullet', 'blond'], band: ['#c0392b'], eyes: 'wide', mouth: 'shout', jersey: ['tank', '#2f568c'], pose: 'towel', extra: 'wrist' },
   elijah: { bg: 'mustard', bgStyle: 'dots', skin: 'dark', hair: ['twists', 'black'], band: ['#f0f3f7'], eyes: 'zen', mouth: 'smirk', jersey: ['polo', '#6e2434'], pose: 'chest', extra: '' },
+  'rowan-williams': { bg: 'burgundy', bgStyle: 'rays', skin: 'tan', hair: ['shag', 'brown'], fh: ['stache', 'brown'], band: ['#2fbf71'], eyes: 'intense', mouth: 'smirk', glasses: 'round', jersey: ['polo', '#1f4f46'], pose: 'shoulder', extra: 'wrist' },
 }
 
 for (const [id, p] of Object.entries(PLAYERS)) {
