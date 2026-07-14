@@ -33,7 +33,7 @@ export function PostForm({ players, meName }) {
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 8, flexWrap: 'wrap' }}>
         <select className="field" value={target} disabled={pending} onChange={(e) => setTarget(e.target.value)}>
           <option value="">To everyone</option>
-          {players.map((p) => <option key={p.id} value={p.id}>@ {p.name}</option>)}
+          {[...players].sort((a, b) => a.name.localeCompare(b.name)).map((p) => <option key={p.id} value={p.id}>@ {p.name}</option>)}
         </select>
         <button className="btn primary" disabled={pending || !body.trim()}>{pending ? 'Posting…' : 'Post'}</button>
         <span className="muted num" style={{ fontSize: 11, marginLeft: 'auto' }}>{280 - body.length}</span>

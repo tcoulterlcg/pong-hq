@@ -10,6 +10,7 @@ export default function RecordPanel({ players, byName, canUndo, lastId }) {
   const [err, setErr] = useState('')
   const [pending, start] = useTransition()
   const router = useRouter()
+  const roster = [...players].sort((a, b) => a.name.localeCompare(b.name))
 
   const submit = () => start(async () => {
     setOk(''); setErr('')
@@ -34,12 +35,12 @@ export default function RecordPanel({ players, byName, canUndo, lastId }) {
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
         <select className="field" value={winner} disabled={pending} onChange={(e) => { setWinner(e.target.value); setOk(''); setErr('') }}>
           <option value="">Winner…</option>
-          {players.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+          {roster.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
         </select>
         <span className="muted" style={{ fontSize: 12 }}>def.</span>
         <select className="field" value={loser} disabled={pending} onChange={(e) => { setLoser(e.target.value); setOk(''); setErr('') }}>
           <option value="">Loser…</option>
-          {players.filter((p) => p.id !== winner).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+          {roster.filter((p) => p.id !== winner).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
         </select>
         <button className="btn primary" disabled={pending || !winner || !loser} onClick={submit}>{pending ? 'Recording…' : 'Record'}</button>
         <button className="btn" disabled={pending} title="Reload standings" onClick={() => start(async () => router.refresh())}>⟳</button>
