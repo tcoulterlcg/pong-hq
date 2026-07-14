@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
-import { getStandings, getMatches, isEditor } from '../lib/pingpong.mjs'
+import { getStandings, getMatches, canDeleteMatches } from '../lib/pingpong.mjs'
 import RecordPanel from '../components/RecordPanel'
 import LcgLogo from '../components/LcgLogo'
 
@@ -19,7 +19,7 @@ export default async function Board() {
   const matches = await getMatches(12)
   const me = standings.find((p) => p.id === ruId) || null
   const canRecord = authed && !!me?.can_submit
-  const canEdit = authed && !!me && isEditor(me.id)
+  const canDelete = authed && !!me && canDeleteMatches(me.id)
 
   // Panels — all derived from the ledger
   const biggestUpset = [...matches].sort((a, b) => (b.delta || 0) - (a.delta || 0))[0] || null
@@ -28,7 +28,7 @@ export default async function Board() {
 
   const Track = () => (
     <div className="tick-track">
-      <span className="tick-tag">🏓 OFFICE TABLE TENNIS · TOP {standings.length}</span>
+      <span className="tick-tag">🏓 OFFICE PING PONG · TOP {standings.length}</span>
       {standings.map((p) => (
         <span className="tick-item" key={p.rank}>
           <span className={`tick-rank ${medal(p.rank)}`}>{p.rank}</span>
@@ -48,7 +48,7 @@ export default async function Board() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
               <LcgLogo height={30} />
-              <span className="brand-chip">Table Tennis Stats</span>
+              <span className="brand-chip">Ping Pong Stats</span>
             </div>
             <h1>Office <span className="accent">Rankings</span></h1>
             <div className="sub">LCG Advisors · Elo K=32, everyone starts 1500 · live from the match ledger (shared with Reconciliation HQ)</div>
@@ -106,7 +106,7 @@ export default async function Board() {
               <div className="card">
                 <div className="card-head"><span className="card-title">Record Match</span><span className="muted" style={{ fontSize: 11 }}>signed-in players</span></div>
                 <div className="pad">
-                  <RecordPanel players={standings.map((p) => ({ id: p.id, name: p.name }))} byName={me.name} canUndo={canEdit && matches.length > 0} lastId={matches[0]?.id || null} />
+                  <RecordPanel players={standings.map((p) => ({ id: p.id, name: p.name }))} byName={me.name} canUndo={canDelete && matches.length > 0} lastId={matches[0]?.id || null} />
                 </div>
               </div>
             )}

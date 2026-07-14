@@ -24,7 +24,7 @@ export default function LoginForm({ profiles }) {
       <form className="card login-card" onSubmit={submit}>
         <div className="card-head" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 8, display: 'flex' }}>
           <LcgLogo height={26} />
-          <span className="card-title">🏓 Table Tennis Stats — Player Sign-in</span>
+          <span className="card-title">🏓 Ping Pong Stats — Player Sign-in</span>
         </div>
         <div className="pad">
           <p className="muted" style={{ fontSize: 12.5, marginTop: 0 }}>Viewing the ladder needs no sign-in. Sign in with your name to record your games.</p>

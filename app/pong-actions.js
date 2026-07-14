@@ -1,7 +1,7 @@
 'use server'
 // Ladder mutations against the shared cloud ledger. Any signed-in player with
 // submit rights can record a match (everyone except the view-only players);
-// deleting matches stays with the editors.
+// deleting matches from the log is Trevor only.
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import * as PP from '../lib/pingpong.mjs'
@@ -24,7 +24,7 @@ export async function recordMatch(winnerId, loserId) {
 
 export async function removeMatch(id) {
   const p = await actor()
-  if (!p || !PP.isEditor(p.id)) return { ok: false, error: 'Only Trevor, Shay, or Mark can remove matches.' }
+  if (!p || !PP.canDeleteMatches(p.id)) return { ok: false, error: 'Only Trevor can remove matches.' }
   const res = await PP.removeMatch(id)
   if (res.ok) revalidatePath('/')
   return res

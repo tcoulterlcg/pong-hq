@@ -1,7 +1,7 @@
 import LoginForm from '../../components/LoginForm'
 import { getPlayers } from '../../lib/pingpong.mjs'
 
-export const metadata = { title: 'Sign in — Table Tennis Stats' }
+export const metadata = { title: 'Sign in — Ping Pong Stats' }
 export const dynamic = 'force-dynamic'
 
 export default async function Login() {
