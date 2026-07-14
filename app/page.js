@@ -53,8 +53,9 @@ export default async function Board() {
             <h1>Office <span className="accent">Rankings</span></h1>
             <div className="sub">LCG Advisors · Elo K=32, everyone starts 1500 · live from the match ledger (shared with Reconciliation HQ)</div>
           </div>
-          <div className="sub">
-            {canRecord ? <>Signed in: <b style={{ color: 'var(--text2)' }}>{me.name}</b></> : <Link href="/login">Player sign-in →</Link>}
+          <div className="sub" style={{ display: 'flex', gap: 16 }}>
+            <Link href="/players">Players →</Link>
+            {canRecord ? <span>Signed in: <b style={{ color: 'var(--text2)' }}>{me.name}</b></span> : <Link href="/login">Player sign-in →</Link>}
           </div>
         </div>
 
