@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signIn } from '../app/auth-actions'
 import { EDITOR_PROFILES } from '../lib/users.mjs'
+import LcgLogo from './LcgLogo'
 
 export default function LoginForm() {
   const router = useRouter()
@@ -22,7 +23,10 @@ export default function LoginForm() {
   return (
     <div className="login-wrap">
       <form className="card login-card" onSubmit={submit}>
-        <div className="card-head"><span className="card-title">🏓 Table Tennis HQ — Editor Sign-in</span></div>
+        <div className="card-head" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 8, display: 'flex' }}>
+          <LcgLogo height={26} />
+          <span className="card-title">🏓 Table Tennis HQ — Editor Sign-in</span>
+        </div>
         <div className="pad">
           <p className="muted" style={{ fontSize: 12.5, marginTop: 0 }}>Viewing the ladder needs no sign-in. Recording matches is limited to the three editors.</p>
           <label className="card-title" style={{ display: 'block', margin: '12px 0 6px' }}>Profile</label>

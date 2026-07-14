@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { getStandings, getMatches, isEditor } from '../lib/pingpong.mjs'
 import { byId } from '../lib/users.mjs'
 import RecordPanel from '../components/RecordPanel'
+import LcgLogo from '../components/LcgLogo'
 
 export const dynamic = 'force-dynamic' // always reflect the shared ledger
 
@@ -44,8 +45,12 @@ export default async function Board() {
       <div className="wrap">
         <div className="head">
           <div>
-            <h1>Table Tennis <span className="accent">HQ</span></h1>
-            <div className="sub">LCG office ladder · Elo K=32, everyone starts 1500 · live from the match ledger (shared with Reconciliation HQ)</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
+              <LcgLogo height={30} />
+              <span className="brand-chip">Table Tennis HQ</span>
+            </div>
+            <h1>Office <span className="accent">Ladder</span></h1>
+            <div className="sub">LCG Advisors · Elo K=32, everyone starts 1500 · live from the match ledger (shared with Reconciliation HQ)</div>
           </div>
           <div className="sub">
             {canEdit ? <>Signed in: <b style={{ color: 'var(--text2)' }}>{me.name}</b></> : <Link href="/login">Editor sign-in →</Link>}

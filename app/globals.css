@@ -16,7 +16,8 @@ a { color: var(--accent); text-decoration: none; }
 .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px 60px; }
 .head { display: flex; align-items: baseline; justify-content: space-between; padding: 26px 0 14px; }
 .head h1 { margin: 0; font-size: 26px; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
-.head h1 .accent { color: var(--gold); }
+.head h1 .accent { color: var(--accent-hi, #6ea3d8); }
+.brand-chip { padding: 2px 8px; font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #6ea3d8; border: 1px solid rgba(63,124,192,.45); border-radius: 3px; }
 .head .sub { color: var(--mut); font-size: 12px; }
 
 /* ticker */
