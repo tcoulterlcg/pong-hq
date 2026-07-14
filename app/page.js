@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { getStandings, getMatches, isEditor } from '../lib/pingpong.mjs'
-import { byId } from '../lib/users.mjs'
 import RecordPanel from '../components/RecordPanel'
 import LcgLogo from '../components/LcgLogo'
 
@@ -15,10 +14,12 @@ const fmtWhen = (iso) => new Date(iso).toLocaleString('en-US', { month: 'short',
 export default async function Board() {
   const ck = await cookies()
   const authed = ck.get('auth')?.value === '1'
-  const me = byId(ck.get('ru')?.value)
-  const canEdit = authed && me && isEditor(me.id)
-  const standings = getStandings()
-  const matches = getMatches(12)
+  const ruId = ck.get('ru')?.value
+  const standings = await getStandings()
+  const matches = await getMatches(12)
+  const me = standings.find((p) => p.id === ruId) || null
+  const canRecord = authed && !!me?.can_submit
+  const canEdit = authed && !!me && isEditor(me.id)
 
   // Panels — all derived from the ledger
   const biggestUpset = [...matches].sort((a, b) => (b.delta || 0) - (a.delta || 0))[0] || null
@@ -53,7 +54,7 @@ export default async function Board() {
             <div className="sub">LCG Advisors · Elo K=32, everyone starts 1500 · live from the match ledger (shared with Reconciliation HQ)</div>
           </div>
           <div className="sub">
-            {canEdit ? <>Signed in: <b style={{ color: 'var(--text2)' }}>{me.name}</b></> : <Link href="/login">Editor sign-in →</Link>}
+            {canRecord ? <>Signed in: <b style={{ color: 'var(--text2)' }}>{me.name}</b></> : <Link href="/login">Player sign-in →</Link>}
           </div>
         </div>
 
@@ -81,11 +82,11 @@ export default async function Board() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-            {canEdit && (
+            {canRecord && (
               <div className="card">
-                <div className="card-head"><span className="card-title">Record Match</span><span className="muted" style={{ fontSize: 11 }}>editors only</span></div>
+                <div className="card-head"><span className="card-title">Record Match</span><span className="muted" style={{ fontSize: 11 }}>signed-in players</span></div>
                 <div className="pad">
-                  <RecordPanel players={standings.map((p) => ({ id: p.id, name: p.name }))} byName={me.name} canUndo={matches.length > 0} lastId={matches[0]?.id || null} />
+                  <RecordPanel players={standings.map((p) => ({ id: p.id, name: p.name }))} byName={me.name} canUndo={canEdit && matches.length > 0} lastId={matches[0]?.id || null} />
                 </div>
               </div>
             )}

@@ -1,29 +1,31 @@
 'use server'
-// Ladder mutations — same editor gate as the recon site (viewing is public,
-// writing is not). Data lives in the SHARED ledger file, so anything recorded
-// here appears on the recon site instantly, and vice versa.
+// Ladder mutations against the shared cloud ledger. Any signed-in player with
+// submit rights can record a match (everyone except the view-only players);
+// deleting matches stays with the editors.
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import * as PP from '../lib/pingpong.mjs'
 
-async function editor() {
+async function actor() {
   const ck = await cookies()
   if (ck.get('auth')?.value !== '1') return null
   const id = ck.get('ru')?.value
-  return PP.isEditor(id) ? id : null
+  const players = await PP.getPlayers()
+  return players.find((x) => x.id === id) || null
 }
-const DENIED = { ok: false, error: 'Sign in as Trevor, Shay, or Mark to edit the ladder.' }
 
-export async function recordMatch(winnerId, loserId, byName) {
-  const u = await editor()
-  if (!u) return DENIED
-  const res = PP.recordMatch(winnerId, loserId, byName)
+export async function recordMatch(winnerId, loserId) {
+  const p = await actor()
+  if (!p || !p.can_submit) return { ok: false, error: 'Sign in with your player profile to record games.' }
+  const res = await PP.recordMatch(winnerId, loserId, p.name)
   if (res.ok) revalidatePath('/')
   return res
 }
+
 export async function removeMatch(id) {
-  if (!(await editor())) return DENIED
-  const res = PP.removeMatch(id)
+  const p = await actor()
+  if (!p || !PP.isEditor(p.id)) return { ok: false, error: 'Only Trevor, Shay, or Mark can remove matches.' }
+  const res = await PP.removeMatch(id)
   if (res.ok) revalidatePath('/')
   return res
 }
