@@ -159,3 +159,23 @@ a.btn, button.btn {
   .card-head { flex-wrap: wrap; }
   .ptab-set.small { width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
+
+/* ---------- Practice tag colors ---------- */
+.practice-tag.qofe { color: #f4c76a; border-color: rgba(244, 199, 106, 0.45); background: rgba(244, 199, 106, 0.12); }
+.practice-tag.fals { color: #6ed9a6; border-color: rgba(110, 217, 166, 0.45); background: rgba(110, 217, 166, 0.12); }
+
+/* ---------- Big screens: the section bar becomes a left rail (Claude Design layout) ---------- */
+@media (min-width: 1100px) {
+  .wrap { max-width: 1400px !important; padding-left: 292px !important; padding-right: 32px !important; }
+  .mnav {
+    left: max(32px, calc((100vw - 1400px) / 2 + 32px)) !important; transform: none !important;
+    top: 68px; bottom: auto !important; width: 232px; height: auto !important;
+    flex-direction: column; align-items: stretch !important; gap: 6px !important; padding: 16px 14px !important;
+    border-radius: 16px !important;
+  }
+  .mnav a, .mnav button { justify-content: flex-start; height: 46px !important; padding: 0 14px !important; }
+  .mnav .fab { order: 9; margin: 10px 0 0 !important; justify-content: center; height: 48px !important; }
+  .mnav .fab::after { content: 'Record a match' !important; }
+  .stat-tile .val { font-size: 22px !important; }
+  .head h1 { font-size: 34px; }
+}

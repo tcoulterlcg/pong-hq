@@ -1,16 +1,14 @@
 import './globals.css'
 import './theme.css'
 import './theme-mobile.css'
-import './theme-fonts.css'
 import './theme-desktop.css'
 import './theme-pages.css'
-import { Inter, Michroma, Chakra_Petch } from 'next/font/google'
+import { Michroma, IBM_Plex_Sans } from 'next/font/google'
 import PongGalaxy from '../components/PongGalaxy'
 import MobileNav from '../components/MobileNav'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const michroma = Michroma({ subsets: ['latin'], weight: '400', variable: '--font-brand' })
-const chakra = Chakra_Petch({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-chakra' })
+const plex = IBM_Plex_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-plex' })
 
 export const metadata = {
   // One name everywhere (matches lcgpingpong.vercel.app and the LCG + PING PONG logo)
@@ -29,7 +27,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} ${michroma.variable} ${chakra.variable}`}>
+    <html lang="en" className={`${michroma.variable} ${plex.variable}`}>
       <body>
         <PongGalaxy />
         {children}
