@@ -1,0 +1,43 @@
+/* Fonts: match Command Center theme v3.1 exactly.
+   Chakra Petch throughout (text, labels, numbers); Michroma only for page titles.
+   Loaded last, so it wins over theme.css and theme-mobile.css. */
+:root {
+  --sans: var(--font-chakra), 'Chakra Petch', system-ui, sans-serif;
+  --title: var(--font-brand), 'Michroma', sans-serif;
+  --plex: var(--sans);
+  --brand: var(--sans);
+}
+body, input, select, textarea, button { font-family: var(--sans) !important; }
+
+/* Michroma: page titles only */
+.head h1 { font-family: var(--title) !important; font-weight: 400 !important; }
+
+/* Labels: Chakra Petch 600, upper-case, tracked */
+.card-title, .stat-tile .lbl, .board-row.hdr, .tc-cat, .ptab, .brand-chip, .tick-tag,
+.rp-slot .k, .rp-def, .mnav a, .mnav button, .player-name, .player-title {
+  font-family: var(--sans) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase;
+}
+.card-title { font-size: 11.5px !important; }
+.stat-tile .lbl, .tc-cat { font-size: 10.5px !important; }
+.board-row.hdr { font-size: 10.5px !important; letter-spacing: 0.1em !important; }
+.ptab { font-size: 11.5px !important; }
+.brand-chip, .tick-tag { font-size: 10.5px !important; }
+.rp-slot .k, .rp-def { font-size: 10.5px !important; }
+.player-name { font-size: 14px !important; letter-spacing: 0.08em !important; }
+
+/* Numbers and names: Chakra Petch, no tracking */
+.rating, .rank-chip, .tick-rank { font-family: var(--sans) !important; font-weight: 600 !important; letter-spacing: 0 !important; }
+.rating { font-size: 16px !important; }
+.rank-chip { font-size: 13px !important; }
+.pname, .stat-tile .val { font-weight: 600 !important; }
+
+@media (max-width: 760px) {
+  .stat-tile .lbl { font-size: 9px !important; letter-spacing: 0.1em !important; }
+  .board-row.hdr { font-size: 9.5px !important; letter-spacing: 0.08em !important; }
+  .ptab { font-size: 11px !important; letter-spacing: 0.1em !important; }
+  .mnav a, .mnav button { font-size: 10px !important; letter-spacing: 0.1em !important; }
+  .card-title { font-size: 11px !important; }
+}

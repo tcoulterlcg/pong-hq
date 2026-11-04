@@ -1,13 +1,14 @@
 import './globals.css'
 import './theme.css'
 import './theme-mobile.css'
-import { Inter, Michroma, IBM_Plex_Sans } from 'next/font/google'
+import './theme-fonts.css'
+import { Inter, Michroma, Chakra_Petch } from 'next/font/google'
 import PongGalaxy from '../components/PongGalaxy'
 import MobileNav from '../components/MobileNav'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const michroma = Michroma({ subsets: ['latin'], weight: '400', variable: '--font-brand' })
-const plex = IBM_Plex_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-plex' })
+const chakra = Chakra_Petch({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-chakra' })
 
 export const metadata = {
   title: 'Office Ping Pong Stats',
@@ -24,7 +25,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} ${michroma.variable} ${plex.variable}`}>
+    <html lang="en" className={`${inter.variable} ${michroma.variable} ${chakra.variable}`}>
       <body>
         <PongGalaxy />
         {children}
