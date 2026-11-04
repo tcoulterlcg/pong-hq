@@ -1,12 +1,10 @@
 import './globals.css'
 import './theme.css'
-import { Inter, Michroma, IBM_Plex_Sans } from 'next/font/google'
 import PongGalaxy from '../components/PongGalaxy'
 import MobileNav from '../components/MobileNav'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
-const michroma = Michroma({ subsets: ['latin'], weight: '400', variable: '--font-brand' })
-const plex = IBM_Plex_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-plex' })
+// Fonts match Command Center (LCG brand): Chakra Petch for everything, Michroma for titles.
+// Self-hosted from /public/fonts, declared at the top of theme.css.
 
 export const metadata = {
   title: 'Office Ping Pong Stats',
@@ -23,7 +21,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} ${michroma.variable} ${plex.variable}`}>
+    <html lang="en">
       <body>
         <PongGalaxy />
         {children}

@@ -1,13 +1,22 @@
+/* LCG brand fonts — same files and rules as Command Center (Theme v3.1).
+   Chakra Petch (SIL OFL) for everything; Michroma (SIL OFL) for page titles only.
+   The 600 face covers 600-900 so heavier weights in globals.css don't get faux-bolded. */
+@font-face { font-family: 'Chakra Petch'; font-style: normal; font-weight: 400; font-display: swap; src: url(/fonts/chakra-petch-400.woff2) format('woff2'); }
+@font-face { font-family: 'Chakra Petch'; font-style: normal; font-weight: 500; font-display: swap; src: url(/fonts/chakra-petch-500.woff2) format('woff2'); }
+@font-face { font-family: 'Chakra Petch'; font-style: normal; font-weight: 600 900; font-display: swap; src: url(/fonts/chakra-petch-600.woff2) format('woff2'); }
+@font-face { font-family: 'Michroma'; font-style: normal; font-weight: 400; font-display: swap; src: url(/fonts/michroma.woff2) format('woff2'); }
+
 /* ============================================================
    Pong HQ theme — Command Center look (navy glass on a galaxy),
    built phone-first. Loaded after globals.css and only overrides it.
-   TYPE: Michroma for brand voice (titles, labels, big numbers);
-         IBM Plex Sans for everything you read.
+   TYPE: Chakra Petch everywhere; Michroma for the page title only
+         (matches Command Center — see the Type block at the end).
    COLOUR: one blue family off LCG navy. Change --ph* to re-tint.
    ============================================================ */
 :root {
-  --brand: var(--font-brand), 'Michroma', system-ui, sans-serif;
-  --plex: var(--font-plex), 'IBM Plex Sans', system-ui, sans-serif;
+  --sans: 'Chakra Petch', system-ui, sans-serif;
+  --title: 'Michroma', 'Chakra Petch', sans-serif;
+  --brand: var(--sans);
   --ph: #6f9dff;
   --ph-rgb: 111, 157, 255;
   --ph-bright: #d6e4ff;
@@ -40,7 +49,7 @@
 html { background: #000; color-scheme: dark; }
 body {
   background: transparent !important;
-  font-family: var(--plex);
+  font-family: var(--sans);
   color: var(--text);
   -webkit-tap-highlight-color: transparent;
 }
@@ -101,7 +110,7 @@ a.board-link:hover { background: linear-gradient(90deg, rgba(var(--ph-rgb), 0.13
 .rank-chip.bronze { box-shadow: 0 0 14px -4px rgba(224, 166, 118, 0.6); }
 
 /* ---------- Practice tags: tinted pills ---------- */
-.practice-tag { border-radius: 6px; font-family: var(--plex); font-weight: 600; letter-spacing: 0.02em; }
+.practice-tag { border-radius: 6px; font-family: var(--sans); font-weight: 600; letter-spacing: 0.02em; }
 .practice-tag.sfc { color: #b9cfff; border-color: rgba(var(--ph-rgb), 0.45); background: rgba(var(--ph-rgb), 0.14); }
 .practice-tag.fig { color: #c3cddd; border-color: rgba(195, 205, 221, 0.4); background: rgba(195, 205, 221, 0.1); }
 
@@ -145,7 +154,7 @@ a.board-link:hover { background: linear-gradient(90deg, rgba(var(--ph-rgb), 0.13
 .rp-chip {
   display: flex; align-items: center; gap: 8px; min-height: 46px; padding: 6px 10px;
   border-radius: 12px; border: 1px solid rgba(var(--ph-rgb), 0.22); background: var(--well);
-  color: var(--text); font: 500 13.5px var(--plex); text-align: left; cursor: pointer;
+  color: var(--text); font: 500 13.5px var(--sans); text-align: left; cursor: pointer;
 }
 .rp-chip .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rp-chip .rt { font-size: 11px; color: var(--mut); }
@@ -220,6 +229,28 @@ a.board-link:hover { background: linear-gradient(90deg, rgba(var(--ph-rgb), 0.13
     background: linear-gradient(180deg, #86adff, var(--ph-dim)); color: #fff;
     box-shadow: 0 0 24px -4px rgba(var(--ph-rgb), 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.3);
   }
+}
+
+/* ============================================================
+   Type — matches Command Center Theme v3.1 (the LCG brand standard).
+   Chakra Petch for everything; labels are 600, upper-case, tracked 0.14em.
+   Numbers are Chakra Petch 600, no tracking. Michroma only for the page title.
+   ============================================================ */
+body, input, select, textarea, button { font-family: var(--sans); }
+.head h1 { font-family: var(--title) !important; font-weight: 400 !important; }
+.card-title, .stat-tile .lbl, .board-row.hdr, .tc-cat, .ptab, .brand-chip, .tick-tag, .rp-slot .k, .rp-def {
+  font-family: var(--sans) !important; font-weight: 600 !important; letter-spacing: 0.14em !important; text-transform: uppercase;
+}
+.card-title, .stat-tile .lbl, .tc-cat { font-size: 11.5px !important; }
+.board-row.hdr, .brand-chip, .tick-tag, .rp-slot .k, .rp-def { font-size: 11px !important; }
+.ptab { font-size: 12px !important; }
+.rating, .rank-chip, .tick-rank, .stat-tile .val { font-family: var(--sans) !important; font-weight: 600 !important; letter-spacing: 0 !important; }
+.rating { font-size: 17px; }
+.rank-chip { font-size: 13px; }
+.player-name { font-family: var(--sans); font-weight: 600; font-size: 15px; letter-spacing: 0.1em; }
+.pname, .rp-slot .n { font-weight: 600; }
+@media (max-width: 760px) {
+  .mnav a, .mnav button { font: 600 11px var(--sans) !important; letter-spacing: 0.1em !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
