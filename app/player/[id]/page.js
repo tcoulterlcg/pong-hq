@@ -77,7 +77,7 @@ export default async function PlayerPage({ params }) {
       <PageHead
         title={
           <span className="player-heading">
-            <span className={`rank-chip big ${medal(p.rank)}`}>{p.rank}</span>
+            <span className={`rank-chip big ${p.games > 0 ? medal(p.rank) : ''}`}>{p.rank}</span>
             {meta.fullName || p.name}
             <span className={`practice-tag ${p.practice.toLowerCase()}`}>{p.practice}</span>
           </span>

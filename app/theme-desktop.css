@@ -50,9 +50,9 @@
   .board-row.hdr { min-height: 0; }
   .pname { font-size: 15.5px; font-weight: 600; }
   /* podium rows get a soft medal tint */
-  a.board-row:has(.rank-chip.gold)   { background: linear-gradient(90deg, rgba(244, 199, 106, 0.12), rgba(244, 199, 106, 0) 60%); }
-  a.board-row:has(.rank-chip.silver) { background: linear-gradient(90deg, rgba(211, 220, 238, 0.09), rgba(211, 220, 238, 0) 60%); }
-  a.board-row:has(.rank-chip.bronze) { background: linear-gradient(90deg, rgba(224, 166, 118, 0.10), rgba(224, 166, 118, 0) 60%); }
+  a.board-row:not(.period):has(.rank-chip.gold)   { background: linear-gradient(90deg, rgba(244, 199, 106, 0.12), rgba(244, 199, 106, 0) 60%); }
+  a.board-row:not(.period):has(.rank-chip.silver) { background: linear-gradient(90deg, rgba(211, 220, 238, 0.09), rgba(211, 220, 238, 0) 60%); }
+  a.board-row:not(.period):has(.rank-chip.bronze) { background: linear-gradient(90deg, rgba(224, 166, 118, 0.10), rgba(224, 166, 118, 0) 60%); }
   a.board-row:hover { background: linear-gradient(90deg, rgba(var(--ph-rgb), 0.16), rgba(var(--ph-rgb), 0.03) 75%) !important; }
   .rank-chip { min-width: 30px; height: 30px; }
   .rating { font-size: 18px !important; }

@@ -128,7 +128,7 @@ export default function RankingsBoard({ players, matchLog }) {
       {sorted.map((p) => (
         <Link className={`board-row board-link${isAll ? '' : ' period'}`} key={p.id} href={`/player/${p.id}`}>
           <span className="rank-cell">
-            <span className={`rank-chip ${medal(p.place)}`}>{p.place}</span>
+            <span className={`rank-chip ${p.games > 0 ? medal(p.place) : ''}`}>{p.place}</span>
             {isAll && p.move !== 'same' && <span className={`mv ${p.move}`} aria-label={p.move === 'up' ? 'Moved up' : 'Moved down'}>{p.move === 'up' ? '▲' : '▼'}</span>}
           </span>
           <span className="pname">
