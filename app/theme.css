@@ -1,0 +1,227 @@
+/* ============================================================
+   Pong HQ theme — Command Center look (navy glass on a galaxy),
+   built phone-first. Loaded after globals.css and only overrides it.
+   TYPE: Michroma for brand voice (titles, labels, big numbers);
+         IBM Plex Sans for everything you read.
+   COLOUR: one blue family off LCG navy. Change --ph* to re-tint.
+   ============================================================ */
+:root {
+  --brand: var(--font-brand), 'Michroma', system-ui, sans-serif;
+  --plex: var(--font-plex), 'IBM Plex Sans', system-ui, sans-serif;
+  --ph: #6f9dff;
+  --ph-rgb: 111, 157, 255;
+  --ph-bright: #d6e4ff;
+  --ph-bright-rgb: 214, 228, 255;
+  --ph-dim: #4572d9;
+  --ph-glow: rgba(111, 157, 255, 0.5);
+  --glass: rgba(11, 19, 37, 0.74);
+  --glass-face: linear-gradient(180deg, rgba(var(--ph-rgb), 0.075), rgba(var(--ph-rgb), 0.012) 38%), var(--glass);
+  --frame: 0 0 0 1.5px rgba(var(--ph-rgb), 0.42), 0 18px 40px -22px rgba(0, 0, 0, 0.9), 0 0 26px -10px var(--ph-glow), inset 0 1px 0 rgba(var(--ph-bright-rgb), 0.09);
+  --well: rgba(3, 7, 16, 0.55);
+
+  /* remap the old palette onto the glass */
+  --bg0: #000;
+  --bg1: rgba(3, 7, 16, 0.6);
+  --card: var(--glass);
+  --line: rgba(var(--ph-rgb), 0.16);
+  --inner: rgba(var(--ph-rgb), 0.09);
+  --text: #eef3fb;
+  --text2: #d3dcee;
+  --mut: #93a2bc;
+  --mut2: #8193b3;
+  --accent: #6f9dff;
+  --accent-hi: #9fbfff;
+  --green: #6ed9a6;
+  --red: #ff6f88;
+  --amber: #f4c76a;
+  --gold: #f4c76a;
+}
+
+html { background: #000; color-scheme: dark; }
+body {
+  background: transparent !important;
+  font-family: var(--plex);
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+}
+a { color: var(--accent-hi); }
+.galaxy { position: fixed; inset: 0; z-index: -1; display: block; pointer-events: none; }
+
+/* ---------- Glass surfaces ---------- */
+.card, .stat-tile, .player-card {
+  background: var(--glass-face) !important;
+  border: 0 !important;
+  border-radius: 14px;
+  box-shadow: var(--frame);
+  backdrop-filter: blur(12px) saturate(1.15);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+}
+.player-card:hover { box-shadow: 0 0 0 2px rgba(var(--ph-rgb), 0.7), 0 18px 40px -20px rgba(0, 0, 0, 0.9), 0 0 32px -8px var(--ph-glow); }
+.card-head { border-bottom-color: var(--line); }
+.board-row.hdr, .board-strip { background: rgba(var(--ph-rgb), 0.05); }
+a.board-link:hover { background: linear-gradient(90deg, rgba(var(--ph-rgb), 0.13), rgba(var(--ph-rgb), 0.03) 75%); }
+.player-photo { background: radial-gradient(circle at 50% 30%, #1d3466, #070d1c); }
+
+/* ---------- Brand voice: Michroma, upper-case, tracked ---------- */
+.head h1 {
+  font: 400 24px/1.25 var(--brand);
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-shadow: 0 0 22px rgba(var(--ph-rgb), 0.4);
+}
+.head h1 .accent { color: var(--ph); }
+.card-title, .stat-tile .lbl, .board-row.hdr, .tc-cat, .ptab, .brand-chip, .tick-tag {
+  font-family: var(--brand) !important;
+  font-weight: 400 !important;
+}
+.card-title { font-size: 10px; letter-spacing: 0.2em; color: #8ea6d4; }
+.stat-tile .lbl, .tc-cat { font-size: 9px; letter-spacing: 0.2em; color: #8ea6d4; }
+.board-row.hdr { font-size: 8.5px; letter-spacing: 0.16em; color: #8ea6d4; }
+.brand-chip { font-size: 8.5px; letter-spacing: 0.24em; color: var(--ph); border-color: rgba(var(--ph-rgb), 0.5); border-radius: 6px; padding: 4px 8px; }
+.rating { font-family: var(--brand); font-weight: 400; font-size: 14px; letter-spacing: 0.02em; color: #fff; }
+.stat-tile .val { font-weight: 600; }
+.player-name { font-family: var(--brand); font-weight: 400; font-size: 12px; letter-spacing: 0.1em; }
+
+/* ---------- Ticker: kept, now a navy glass band ---------- */
+.ticker {
+  height: 40px;
+  background: linear-gradient(90deg, rgba(6, 12, 26, 0.85), rgba(26, 46, 96, 0.75), rgba(6, 12, 26, 0.85));
+  border-bottom: 0;
+  box-shadow: 0 1px 0 rgba(var(--ph-rgb), 0.35), 0 8px 24px -12px var(--ph-glow);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.tick-tag { font-size: 8.5px; letter-spacing: 0.2em; color: var(--gold); background: rgba(244, 199, 106, 0.1); box-shadow: inset 0 0 0 1px rgba(244, 199, 106, 0.4); }
+.tick-rank { background: rgba(var(--ph-rgb), 0.18); }
+
+/* ---------- Rank chips ---------- */
+.rank-chip { background: rgba(var(--ph-rgb), 0.1); color: var(--text2); box-shadow: inset 0 0 0 1px rgba(var(--ph-rgb), 0.25); font-family: var(--brand); font-weight: 400; font-size: 11px; }
+.rank-chip.gold { box-shadow: 0 0 14px -2px rgba(244, 199, 106, 0.7); }
+.rank-chip.silver { box-shadow: 0 0 14px -4px rgba(211, 220, 238, 0.6); }
+.rank-chip.bronze { box-shadow: 0 0 14px -4px rgba(224, 166, 118, 0.6); }
+
+/* ---------- Practice tags: tinted pills ---------- */
+.practice-tag { border-radius: 6px; font-family: var(--plex); font-weight: 600; letter-spacing: 0.02em; }
+.practice-tag.sfc { color: #b9cfff; border-color: rgba(var(--ph-rgb), 0.45); background: rgba(var(--ph-rgb), 0.14); }
+.practice-tag.fig { color: #c3cddd; border-color: rgba(195, 205, 221, 0.4); background: rgba(195, 205, 221, 0.1); }
+
+/* ---------- Controls ---------- */
+.ptab-set { background: var(--well); border-color: rgba(var(--ph-rgb), 0.22); border-radius: 10px; padding: 3px; }
+.ptab { font-size: 9px; letter-spacing: 0.14em; padding: 8px 12px; border-radius: 8px; }
+.ptab.on { background: linear-gradient(180deg, rgba(var(--ph-rgb), 0.34), rgba(var(--ph-rgb), 0.14)); color: #fff; box-shadow: inset 0 0 0 1px rgba(var(--ph-rgb), 0.7); }
+.pnav-btn, .pmonth { background: var(--well); border-color: rgba(var(--ph-rgb), 0.3); }
+.field, select.field, textarea.field {
+  background: var(--well);
+  border: 1px solid rgba(var(--ph-rgb), 0.25);
+  border-radius: 10px;
+  color: var(--text);
+}
+.field:focus { outline: none; border-color: rgba(var(--ph-rgb), 0.7); box-shadow: 0 0 0 3px rgba(var(--ph-rgb), 0.15); }
+.btn { background: rgba(var(--ph-rgb), 0.08); border: 1px solid rgba(var(--ph-rgb), 0.38); color: var(--ph-bright); border-radius: 10px; }
+.btn:hover { background: rgba(var(--ph-rgb), 0.18); border-color: rgba(var(--ph-rgb), 0.7); color: #fff; }
+.btn.primary, .btn.primary:hover {
+  background: linear-gradient(180deg, #86adff, var(--ph-dim));
+  border: 1px solid rgba(var(--ph-bright-rgb), 0.35);
+  color: #fff;
+  box-shadow: 0 0 20px -6px var(--ph-glow), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* ---------- Record match: tap-to-pick player grid ---------- */
+#record { scroll-margin-top: 16px; }
+.rp-slots { display: flex; align-items: stretch; gap: 10px; }
+.rp-slot {
+  flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 12px 8px; border-radius: 12px; border: 1px dashed rgba(var(--ph-rgb), 0.35);
+  background: none; color: inherit; font: inherit; cursor: pointer;
+}
+.rp-slot.on { border-style: solid; border-color: rgba(var(--ph-rgb), 0.8); background: rgba(var(--ph-rgb), 0.1); }
+.rp-slot .k { font: 400 8.5px var(--brand); letter-spacing: 0.2em; text-transform: uppercase; }
+.rp-slot .k.w { color: var(--green); } .rp-slot .k.l { color: var(--red); }
+.rp-slot .n { font-size: 16px; font-weight: 600; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rp-slot .d { font-size: 12px; font-weight: 600; min-height: 15px; }
+.rp-def { align-self: center; font: 400 9px var(--brand); letter-spacing: 0.2em; color: var(--mut); text-transform: uppercase; }
+.rp-hint { text-align: center; font-size: 12.5px; color: var(--mut); margin: 10px 0; }
+.rp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.rp-chip {
+  display: flex; align-items: center; gap: 8px; min-height: 46px; padding: 6px 10px;
+  border-radius: 12px; border: 1px solid rgba(var(--ph-rgb), 0.22); background: var(--well);
+  color: var(--text); font: 500 13.5px var(--plex); text-align: left; cursor: pointer;
+}
+.rp-chip .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rp-chip .rt { font-size: 11px; color: var(--mut); }
+.rp-chip.win { border-color: var(--green); background: rgba(110, 217, 166, 0.14); box-shadow: 0 0 14px -4px rgba(110, 217, 166, 0.6); }
+.rp-chip.lose { border-color: var(--red); background: rgba(255, 111, 136, 0.12); }
+.rp-chip:disabled { opacity: 0.5; cursor: default; }
+.rp-actions { display: flex; gap: 8px; margin-top: 12px; }
+.rp-actions .btn.primary { flex: 1; height: 48px; font-size: 15px; }
+.rp-actions .btn { height: 48px; }
+
+/* ---------- Bottom tab bar (phones only) ---------- */
+.mnav { display: none; }
+
+@media (max-width: 760px) {
+  body { font-size: 15px; }
+  .wrap { padding: 0 14px calc(116px + env(safe-area-inset-bottom)); }
+
+  /* header: compact, links move to the tab bar */
+  .head { flex-direction: column; align-items: stretch; gap: 10px; padding: 18px 0 14px; }
+  .head h1 { font-size: 19px; }
+  .head .sub { flex-wrap: wrap; row-gap: 6px; font-size: 13px; }
+  .head .sub a[href="/players"], .head .sub a[href="#board"] { display: none; }
+
+  /* stat tiles: swipe sideways instead of three tall cards */
+  .stat-tiles {
+    display: grid; grid-auto-flow: column; grid-auto-columns: 78%; grid-template-columns: none !important;
+    overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -14px 16px; padding: 2px 14px 8px;
+    scrollbar-width: none;
+  }
+  .stat-tiles::-webkit-scrollbar { display: none; }
+  .stat-tile { scroll-snap-align: start; }
+
+  /* period tabs: full width, thumb-sized */
+  .card-head { padding: 12px 14px; }
+  .ptabs, .ptab-set { width: 100%; }
+  .ptab-set { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .ptab { min-height: 38px; padding: 0 4px; }
+  .board-strip { padding: 8px 14px; }
+
+  /* ladder: rank · player · rating · streak — the rest lives on the player page */
+  .board-row { grid-template-columns: 30px minmax(0, 1fr) 52px 42px; gap: 8px; padding: 10px 14px; min-height: 58px; }
+  .board-row.hdr { min-height: 0; }
+  .board-row > :nth-child(4), .board-row > :nth-child(5), .board-row > :nth-child(6), .board-row > :nth-child(8) { display: none; }
+  .pname { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font-size: 15px; font-weight: 600; }
+  .bclus { margin-left: 0; }
+  .rank-chip { min-width: 26px; }
+
+  .item { padding: 11px 0; font-size: 14px; }
+  .pad { padding: 14px; }
+  .btn, .field { min-height: 44px; }
+  .rp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* the bar */
+  .mnav {
+    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center;
+    position: fixed; z-index: 40; left: 10px; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom));
+    height: 66px; border-radius: 20px;
+    background: var(--glass-face); box-shadow: var(--frame);
+    backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  }
+  .mnav a, .mnav button {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+    height: 58px; border: 0; background: none; padding: 0; cursor: pointer;
+    color: var(--mut); text-decoration: none;
+    font: 400 7.5px var(--brand); letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .mnav .on { color: #fff; }
+  .mnav .on svg { color: #9fbfff; filter: drop-shadow(0 0 6px rgba(var(--ph-rgb), 0.9)); }
+  .mnav .fab {
+    justify-self: center; width: 58px; height: 58px; margin-top: -26px; gap: 0;
+    border: 1px solid rgba(var(--ph-bright-rgb), 0.35); border-radius: 50%;
+    background: linear-gradient(180deg, #86adff, var(--ph-dim)); color: #fff;
+    box-shadow: 0 0 24px -4px rgba(var(--ph-rgb), 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-viewport { animation-duration: 120s; }
+}
