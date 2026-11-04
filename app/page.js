@@ -45,7 +45,7 @@ export default async function Board() {
 
   const Track = () => (
     <div className="tick-track">
-      <span className="tick-tag">🏓 OFFICE PING PONG · TOP {standings.length}</span>
+      <span className="tick-tag">🏓 LCG PING PONG · TOP {standings.length}</span>
       {standings.map((p) => (
         <span className="tick-item" key={p.rank}>
           <span className={`tick-rank ${medal(p.rank)}`}>{p.rank}</span>
@@ -65,7 +65,7 @@ export default async function Board() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
               <LcgLogo height={30} />
-              <span className="brand-chip">Ping Pong Stats</span>
+              <span className="brand-chip">Ping Pong</span>
             </div>
             <h1>Office <span className="accent">Rankings</span></h1>
             <div className="sub">LCG Advisors · Elo K=32, everyone starts 1500 · live from the match ledger (shared with Reconciliation HQ)</div>

@@ -13,7 +13,7 @@ const medal = (r) => (r === 1 ? 'gold' : r === 2 ? 'silver' : r === 3 ? 'bronze'
 export async function generateMetadata({ params }) {
   const { id } = await params
   const p = await getPlayerDetail(id)
-  return { title: p ? `${p.name} — Ping Pong Stats` : 'Player — Ping Pong Stats' }
+  return { title: p ? p.name : 'Player' }
 }
 
 // Build an SVG polyline of the rating series.
@@ -49,7 +49,7 @@ export default async function PlayerPage({ params }) {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
             <LcgLogo height={30} />
-            <span className="brand-chip">Ping Pong Stats</span>
+            <span className="brand-chip">Ping Pong</span>
           </div>
           <h1 style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <span className={`rank-chip ${medal(p.rank)}`} style={{ minWidth: 40, height: 40, fontSize: 18 }}>{p.rank}</span>

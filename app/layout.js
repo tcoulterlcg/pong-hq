@@ -11,9 +11,11 @@ const michroma = Michroma({ subsets: ['latin'], weight: '400', variable: '--font
 const chakra = Chakra_Petch({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-chakra' })
 
 export const metadata = {
-  title: 'Office Ping Pong Stats',
+  // One name everywhere (matches lcgpingpong.vercel.app and the LCG + PING PONG logo)
+  title: { default: 'LCG Ping Pong', template: '%s · LCG Ping Pong' },
+  applicationName: 'LCG Ping Pong',
   description: 'The LCG office ping-pong rankings — live from the match ledger',
-  appleWebApp: { capable: true, title: 'Pong HQ', statusBarStyle: 'black-translucent' },
+  appleWebApp: { capable: true, title: 'LCG Ping Pong', statusBarStyle: 'black-translucent' },
 }
 
 export const viewport = {

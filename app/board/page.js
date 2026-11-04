@@ -5,7 +5,7 @@ import MessageBoardSection from '../../components/MessageBoardSection'
 import LcgLogo from '../../components/LcgLogo'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'Message Board — Office Ping Pong Stats' }
+export const metadata = { title: 'Message Board' }
 
 export default async function BoardPage() {
   const ck = await cookies()
@@ -21,7 +21,7 @@ export default async function BoardPage() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
             <LcgLogo height={30} />
-            <span className="brand-chip">Ping Pong Stats</span>
+            <span className="brand-chip">Ping Pong</span>
           </div>
           <h1>Message <span className="accent">Board</span></h1>
           <div className="sub">post to the group or @ a player</div>

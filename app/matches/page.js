@@ -5,7 +5,7 @@ import RemoveMatchButton from '../../components/RemoveMatchButton'
 import LcgLogo from '../../components/LcgLogo'
 
 export const dynamic = 'force-dynamic'
-export const metadata = { title: 'All Matches — Office Ping Pong Stats' }
+export const metadata = { title: 'All Matches' }
 
 const fmtWhen = (iso) => new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' })
 
@@ -22,7 +22,7 @@ export default async function Matches() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
             <LcgLogo height={30} />
-            <span className="brand-chip">Ping Pong Stats</span>
+            <span className="brand-chip">Ping Pong</span>
           </div>
           <h1>All <span className="accent">Matches</span></h1>
           <div className="sub">every game ever recorded · newest first · Eastern time</div>

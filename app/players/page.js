@@ -7,7 +7,7 @@ import LcgLogo from '../../components/LcgLogo'
 
 export const dynamic = 'force-dynamic' // stat strips ride the live ledger
 
-export const metadata = { title: 'Players — Office Ping Pong Stats' }
+export const metadata = { title: 'Players' }
 
 const medal = (r) => (r === 1 ? 'gold' : r === 2 ? 'silver' : r === 3 ? 'bronze' : '')
 
@@ -27,7 +27,7 @@ export default async function Players() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
             <LcgLogo height={30} />
-            <span className="brand-chip">Ping Pong Stats</span>
+            <span className="brand-chip">Ping Pong</span>
           </div>
           <h1>The <span className="accent">Players</span></h1>
           <div className="sub">LCG Advisors office roster · card order follows the live rankings</div>
