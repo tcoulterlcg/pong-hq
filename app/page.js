@@ -1,53 +1,58 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
-import { getStandings, getMatches, getMessages, canDeleteMatches, MATCH_ADMIN } from '../lib/pingpong.mjs'
+import { getStandings, getMatches, getMessages, canDeleteMatches, MATCH_ADMIN, PRACTICE_ORDER, READ_ONLY } from '../lib/pingpong.mjs'
+import { computeAllBadgeStats, topBadges } from '../lib/badges.mjs'
 import RecordPanel from '../components/RecordPanel'
 import RemoveMatchButton from '../components/RemoveMatchButton'
 import MessageBoardSection from '../components/MessageBoardSection'
 import RankingsBoard from '../components/RankingsBoard'
-import LcgLogo from '../components/LcgLogo'
+import SignOutButton from '../components/SignOutButton'
+import PageHead from '../components/PageHead'
 
 export const dynamic = 'force-dynamic' // always reflect the shared ledger
 
 const medal = (r) => (r === 1 ? 'gold' : r === 2 ? 'silver' : r === 3 ? 'bronze' : '')
-const medalEmoji = (r) => (r === 1 ? '🥇' : r === 2 ? '🥈' : r === 3 ? '🥉' : '')
-const fmtStreak = (s) => (s === 0 ? '—' : s > 0 ? `W${s}` : `L${-s}`)
+const fmtStreak = (s) => (s > 0 ? `W${s}` : `L${-s}`)
 const fmtWhen = (iso) => new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' })
 
-export default async function Board() {
+export default async function Home() {
   const ck = await cookies()
   const authed = ck.get('auth')?.value === '1'
   const ruId = ck.get('ru')?.value
   const standings = await getStandings()
-  const matches = await getMatches(12)
+  const allMatches = await getMatches(100000) // whole ledger: powers the period views and trophies
+  const recent = allMatches.slice(0, 10)
+  const badgeStats = computeAllBadgeStats(standings, allMatches)
   const me = standings.find((p) => p.id === ruId) || null
-  const canRecord = authed && !!me?.can_submit
+  const canRecord = authed && !!me?.can_submit && !READ_ONLY
   const canDelete = authed && !!me && canDeleteMatches(me.id)
   const messages = await getMessages()
   const boardMe = authed && me ? { id: me.id, name: me.name } : null
-  const practiceOrder = ['SFC', 'QofE', 'FALS']
-  const practiceGroups = [...new Set(standings.map((p) => p.practice))]
-    .sort((a, b) => (practiceOrder.indexOf(a) + 1 || 99) - (practiceOrder.indexOf(b) + 1 || 99))
-  const practiceStats = practiceGroups.map((grp) => {
-    const ps = standings.filter((p) => p.practice === grp)
-    return {
-      grp, n: ps.length,
-      wins: ps.reduce((s, p) => s + p.wins, 0),
-      losses: ps.reduce((s, p) => s + p.losses, 0),
-      avg: ps.length ? Math.round(ps.reduce((s, p) => s + p.rating, 0) / ps.length) : 0,
-    }
-  })
 
-  // Panels — all derived from the ledger
-  const biggestUpset = [...matches].sort((a, b) => (b.delta || 0) - (a.delta || 0))[0] || null
+  const practiceStats = [...new Set(standings.map((p) => p.practice))]
+    .sort((a, b) => (PRACTICE_ORDER.indexOf(a) + 1 || 99) - (PRACTICE_ORDER.indexOf(b) + 1 || 99))
+    .map((grp) => {
+      const ps = standings.filter((p) => p.practice === grp)
+      return {
+        grp, n: ps.length,
+        wins: ps.reduce((s, p) => s + p.wins, 0),
+        losses: ps.reduce((s, p) => s + p.losses, 0),
+        avg: Math.round(ps.reduce((s, p) => s + p.rating, 0) / ps.length),
+      }
+    })
+
+  // Headline numbers, all replayed from the ledger
+  const biggestSwing = [...allMatches].sort((a, b) => (b.delta || 0) - (a.delta || 0))[0] || null
   const longestStreak = [...standings].sort((a, b) => Math.abs(b.streak) - Math.abs(a.streak))[0]
   const mostGames = [...standings].sort((a, b) => b.games - a.games)[0]
+  const hasStreak = longestStreak && longestStreak.streak !== 0
+  const hasGames = mostGames && mostGames.games > 0
 
   const Track = () => (
     <div className="tick-track">
-      <span className="tick-tag">🏓 LCG PING PONG · TOP {standings.length}</span>
+      <span className="tick-tag">🏓 LCG Ping Pong</span>
       {standings.map((p) => (
-        <span className="tick-item" key={p.rank}>
+        <span className="tick-item" key={p.id}>
           <span className={`tick-rank ${medal(p.rank)}`}>{p.rank}</span>
           <b>{p.name}</b>
           <span className="num" style={{ color: 'var(--mut)' }}>{p.rating}</span>
@@ -61,85 +66,90 @@ export default async function Board() {
     <>
       <div className="ticker"><div className="ticker-viewport"><Track /><Track /></div></div>
       <div className="wrap">
-        <div className="head">
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
-              <LcgLogo height={30} />
-              <span className="brand-chip">Ping Pong</span>
-            </div>
-            <h1>Office <span className="accent">Rankings</span></h1>
-            <div className="sub">LCG Advisors · Elo K=32, everyone starts 1500 · live from the match ledger (shared with Reconciliation HQ)</div>
-          </div>
-          <div className="sub" style={{ display: 'flex', gap: 16 }}>
-            <Link href="/players">Players →</Link>
-            <Link href="#board">Message Board ↓</Link>
-            {authed && me
-              ? <span>Signed in: <b style={{ color: 'var(--text2)' }}>{me.name}</b>{!me.can_submit && ' (view-only)'}</span>
-              : <Link href="/login">Player sign-in →</Link>}
-          </div>
-        </div>
+        <PageHead title="Office" accent="Rankings" sub="LCG Advisors · Elo ratings, everyone starts at 1500">
+          {authed && me ? (
+            <>
+              <span className="signed-in">Signed in as <b>{me.name}</b>{!me.can_submit && ' (view only)'}</span>
+              <SignOutButton />
+            </>
+          ) : (
+            <Link href="/login" className="btn">Sign in</Link>
+          )}
+        </PageHead>
 
         <div className="stat-tiles">
           <div className="stat-tile">
             <div className="lbl">Biggest Rating Swing</div>
-            <div className="val">{biggestUpset ? `${biggestUpset.winnerName} def. ${biggestUpset.loserName}` : '—'}</div>
-            <div className="sub">{biggestUpset ? `+${biggestUpset.delta} rating · ${fmtWhen(biggestUpset.at)}` : 'no matches recorded'}</div>
+            <div className="val">{biggestSwing ? `${biggestSwing.winnerName} def. ${biggestSwing.loserName}` : '—'}</div>
+            <div className="sub">{biggestSwing ? `+${biggestSwing.delta} · ${fmtWhen(biggestSwing.at)}` : 'No matches yet'}</div>
           </div>
           <div className="stat-tile">
             <div className="lbl">Longest Active Streak</div>
-            <div className="val" style={{ color: longestStreak?.streak > 0 ? 'var(--green)' : longestStreak?.streak < 0 ? 'var(--red)' : undefined }}>
-              {longestStreak && longestStreak.streak !== 0 ? `${longestStreak.name} · ${fmtStreak(longestStreak.streak)}` : '—'}
+            <div className="val" style={{ color: !hasStreak ? undefined : longestStreak.streak > 0 ? 'var(--green)' : 'var(--red)' }}>
+              {hasStreak ? `${longestStreak.name} · ${fmtStreak(longestStreak.streak)}` : '—'}
             </div>
-            <div className="sub">wins or losses in a row</div>
+            <div className="sub">{hasStreak ? (longestStreak.streak > 0 ? 'Wins in a row' : 'Losses in a row') : 'No matches yet'}</div>
           </div>
           <div className="stat-tile">
             <div className="lbl">Most Games Played</div>
-            <div className="val">{mostGames && mostGames.games > 0 ? `${mostGames.name} · ${mostGames.games}` : '—'}</div>
-            <div className="sub">lifetime matches on the ledger</div>
+            <div className="val">{hasGames ? `${mostGames.name} · ${mostGames.games}` : '—'}</div>
+            <div className="sub">{hasGames ? 'All-time games' : 'No matches yet'}</div>
           </div>
         </div>
 
         <div className="grid">
           <div className="card">
-            <div className="card-head">
-              <span className="card-title">Top 15 Rankings</span>
-              <span className="muted" style={{ fontSize: 11 }}>{standings.reduce((s, p) => s + p.wins, 0)} matches played</span>
-            </div>
-            <RankingsBoard rows={standings.map((p) => ({ id: p.id, name: p.name, rank: p.rank, rating: p.rating, wins: p.wins, losses: p.losses, winPct: p.winPct, streak: p.streak, move: p.move, games: p.games, practice: p.practice }))} />
+            <RankingsBoard
+              players={standings.map((p) => ({
+                id: p.id, name: p.name, rank: p.rank, rating: p.rating, wins: p.wins, losses: p.losses,
+                winPct: p.winPct, streak: p.streak, move: p.move, games: p.games, practice: p.practice,
+                badges: topBadges(badgeStats.get(p.id), 3),
+              }))}
+              matchLog={allMatches.map((m) => ({ w: m.winnerId, l: m.loserId, at: m.at, d: m.delta }))}
+            />
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+          <div className="side">
             {canRecord && (
               <div className="card">
-                <div className="card-head"><span className="card-title">Record Match</span><span className="muted" style={{ fontSize: 11 }}>signed-in players</span></div>
+                <div className="card-head"><span className="card-title">Record a Match</span></div>
                 <div className="pad">
-                  <RecordPanel players={standings.map((p) => ({ id: p.id, name: p.name }))} byName={me.name} canUndo={canDelete && matches.length > 0} lastId={matches[0]?.id || null} />
+                  <RecordPanel players={standings.map((p) => ({ id: p.id, name: p.name, rating: p.rating }))} byName={me.name} canUndo={canDelete && recent.length > 0} lastId={recent[0]?.id || null} />
                 </div>
               </div>
             )}
             <div className="card">
               <div className="card-head"><span className="card-title">Practice Breakdown</span></div>
-              <div className="pad" style={{ paddingTop: 10 }}>
+              <div className="pad tight">
                 {practiceStats.map((g) => (
                   <div className="item" key={g.grp}>
-                    <span><span className={`practice-tag ${g.grp.toLowerCase()}`}>{g.grp}</span> <span className="muted" style={{ fontSize: 12 }}>{g.n} player{g.n === 1 ? '' : 's'}</span></span>
-                    <span className="num" style={{ fontSize: 13 }}>
-                      <span style={{ color: 'var(--green)' }}>{g.wins}</span>–<span style={{ color: 'var(--red)' }}>{g.losses}</span>
-                      <span className="muted"> · avg </span><b>{g.avg}</b>
+                    <span className="item-main">
+                      <span className={`practice-tag ${g.grp.toLowerCase()}`}>{g.grp}</span>
+                      <span className="muted">{g.n} {g.n === 1 ? 'player' : 'players'}</span>
+                    </span>
+                    <span className="num">
+                      <span className="w">{g.wins}</span>–<span className="l">{g.losses}</span>
+                      <span className="muted"> · Avg </span><b>{g.avg}</b>
                     </span>
                   </div>
                 ))}
               </div>
             </div>
             <div className="card">
-              <div className="card-head"><Link href="/matches" className="card-title" style={{ color: 'var(--accent-hi, #6ea3d8)', textDecoration: 'none' }}>Recent Matches →</Link><Link href="/matches" className="muted" style={{ fontSize: 11 }}>view all</Link></div>
-              <div className="pad" style={{ paddingTop: 6 }}>
-                {matches.length === 0 && <p className="muted" style={{ fontSize: 13 }}>No matches yet — the ladder sits at its seeded order.</p>}
-                {matches.map((m) => (
+              <div className="card-head">
+                <span className="card-title">Recent Matches</span>
+                {allMatches.length > 0 && <Link href="/matches" className="head-link">View all</Link>}
+              </div>
+              <div className="pad tight">
+                {recent.length === 0 && <p className="empty">No matches yet. Record the first one to start the ladder.</p>}
+                {recent.map((m) => (
                   <div className="item" key={m.id}>
-                    <span><b>{m.winnerName}</b> def. {m.loserName} <span className="muted" style={{ fontSize: 11 }}>· {fmtWhen(m.at)} · by {m.by}</span></span>
-                    <span style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}>
-                      <span className="num" style={{ color: 'var(--green)', fontWeight: 700 }}>{m.delta == null ? '' : `+${m.delta}`}</span>
+                    <span className="item-main">
+                      <span><b>{m.winnerName}</b> def. {m.loserName}</span>
+                      <span className="muted when">{fmtWhen(m.at)}</span>
+                    </span>
+                    <span className="item-end">
+                      <span className="num delta">{m.delta == null ? '' : `+${m.delta}`}</span>
                       {canDelete && <RemoveMatchButton id={m.id} label={`${m.winnerName} def. ${m.loserName}${m.delta == null ? '' : ` (+${m.delta})`}`} />}
                     </span>
                   </div>
@@ -149,10 +159,9 @@ export default async function Board() {
           </div>
         </div>
 
-        <div style={{ marginTop: 18 }}>
+        <div style={{ marginTop: 22 }}>
           <MessageBoardSection me={boardMe} players={standings.map((p) => ({ id: p.id, name: p.name }))} messages={messages} matchAdmin={MATCH_ADMIN} />
         </div>
-
       </div>
     </>
   )

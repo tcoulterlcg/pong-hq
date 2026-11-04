@@ -10,22 +10,27 @@ export default function MessageBoardSection({ me, players, messages, matchAdmin 
     <div className="card" id="board">
       <div className="card-head">
         <span className="card-title">Message Board</span>
-        <span className="muted" style={{ fontSize: 11 }}>{messages == null ? '' : `${messages.length} posts`}</span>
+        {messages?.length > 0 && <span className="head-meta">{messages.length} {messages.length === 1 ? 'post' : 'posts'}</span>}
       </div>
       <div className="pad">
         {me
           ? <PostForm players={players.filter((x) => x.id !== me.id)} meName={me.name} />
-          : <p className="muted" style={{ fontSize: 13, margin: '0 0 4px' }}><Link href="/login">Sign in →</Link> to post. Reading is free.</p>}
+          : (
+            <div className="signin-prompt">
+              <span>Sign in to post to the board.</span>
+              <Link href="/login" className="btn">Sign in</Link>
+            </div>
+          )}
 
-        {messages == null && <p className="muted" style={{ fontSize: 13, marginTop: 12 }}>The board is being wired up (database table pending) — check back shortly.</p>}
+        {messages == null && <p className="empty">The board isn't available right now. Try again in a minute.</p>}
         {messages != null && (
           <div style={{ marginTop: me ? 16 : 10 }}>
-            {messages.length === 0 && <p className="muted" style={{ fontSize: 13 }}>Nothing posted yet. Be the first.</p>}
+            {messages.length === 0 && <p className="empty">No posts yet.</p>}
             {messages.map((m) => (
               <div className="smack-item" key={m.id}>
                 <div className="smack-head">
                   <b>{m.author}</b>
-                  {m.target && <span className="smack-target">→ {m.target}</span>}
+                  {m.target && <span className="smack-target">to {m.target}</span>}
                   <span className="muted" style={{ fontSize: 11 }}>{fmtWhen(m.at)}</span>
                   {me && (me.id === m.authorId || me.id === matchAdmin) && <span style={{ marginLeft: 'auto' }}><DeleteMessage id={m.id} /></span>}
                 </div>

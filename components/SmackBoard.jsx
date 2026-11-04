@@ -27,13 +27,13 @@ export function PostForm({ players, meName }) {
       <textarea
         className="field" rows={2} maxLength={280} disabled={pending}
         style={{ width: '100%', resize: 'vertical', boxSizing: 'border-box' }}
-        placeholder={`Post to the board as ${meName}…`}
+        placeholder={`Write a post as ${meName}`}
         value={body} onChange={(e) => { setBody(e.target.value); setErr('') }}
       />
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 8, flexWrap: 'wrap' }}>
         <select className="field" value={target} disabled={pending} onChange={(e) => setTarget(e.target.value)}>
           <option value="">To everyone</option>
-          {[...players].sort((a, b) => a.name.localeCompare(b.name)).map((p) => <option key={p.id} value={p.id}>@ {p.name}</option>)}
+          {[...players].sort((a, b) => a.name.localeCompare(b.name)).map((p) => <option key={p.id} value={p.id}>To {p.name}</option>)}
         </select>
         <button className="btn primary" disabled={pending || !body.trim()}>{pending ? 'Posting…' : 'Post'}</button>
         <span className="muted num" style={{ fontSize: 11, marginLeft: 'auto' }}>{280 - body.length}</span>

@@ -39,7 +39,7 @@ export default function RecordPanel({ players, byName, canUndo, lastId }) {
     setOk(''); setErr('')
     const res = await recordMatch(winner, loser, byName)
     if (!res.ok) { setErr(res.error); return }
-    setOk(`✓ Recorded: ${W?.name} def. ${L?.name} (+${res.delta})`)
+    setOk(`Recorded: ${W?.name} def. ${L?.name} (+${res.delta}). Picks stay set for a rematch.`)
     router.refresh()
   })
 
@@ -47,11 +47,11 @@ export default function RecordPanel({ players, byName, canUndo, lastId }) {
     setOk(''); setErr('')
     const res = await removeMatch(lastId)
     if (!res.ok) { setErr(res.error); return }
-    setOk('✓ Last match reverted')
+    setOk('Last match undone.')
     router.refresh()
   })
 
-  const hint = !W ? 'Tap the winner' : !L ? 'Now tap who lost' : delta != null ? `${W.name} gains about ${delta}` : 'Ready to record'
+  const hint = !W ? 'Tap the winner' : !L ? 'Now tap the loser' : delta != null ? `${W.name} gains about ${delta}` : 'Ready to record'
 
   return (
     <div id="record">
@@ -86,14 +86,12 @@ export default function RecordPanel({ players, byName, canUndo, lastId }) {
       </div>
       <div className="rp-actions">
         {canUndo && <button type="button" className="btn" disabled={pending} onClick={undo}>Undo last</button>}
-        <button type="button" className="btn" disabled={pending} title="Reload standings" aria-label="Reload standings" onClick={() => start(async () => router.refresh())}>⟳</button>
-        <button type="button" className="btn primary" disabled={pending || !winner || !loser} onClick={submit}>
+                <button type="button" className="btn primary" disabled={pending || !winner || !loser} onClick={submit}>
           {pending ? 'Recording…' : W && L ? `Record ${W.name} win` : 'Record'}
         </button>
       </div>
       {ok && <p style={{ color: 'var(--green)', fontSize: 13, fontWeight: 700, margin: '10px 0 0' }}>{ok}</p>}
       {err && <p style={{ color: 'var(--red)', fontSize: 13, margin: '10px 0 0' }}>{err}</p>}
-      <p className="muted" style={{ fontSize: 11.5, margin: '10px 0 0' }}>Picks stay put for rematches. Matches recorded here show up on Reconciliation HQ instantly (and vice versa).</p>
     </div>
   )
 }

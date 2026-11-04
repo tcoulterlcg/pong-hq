@@ -1,40 +1,50 @@
 'use client'
-import { useState } from 'react'
+// Sign in by tapping your name. No password: this is an office ladder, and
+// being signed in only lets you record games and post to the board.
+import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { signIn } from '../app/auth-actions'
 import LcgLogo from './LcgLogo'
 
 export default function LoginForm({ profiles }) {
   const router = useRouter()
-  const [profile, setProfile] = useState(profiles[0]?.id || '')
   const [error, setError] = useState('')
-  const [busy, setBusy] = useState(false)
+  const [chosen, setChosen] = useState('')
+  const [pending, start] = useTransition()
+  const roster = [...profiles].sort((a, b) => a.name.localeCompare(b.name))
 
-  async function submit(e) {
-    e.preventDefault()
-    setBusy(true); setError('')
-    const res = await signIn(profile)
-    if (res.ok) { router.replace('/'); router.refresh() }
-    else { setError(res.error || 'Sign-in failed.'); setBusy(false) }
+  const pick = (id) => {
+    setChosen(id); setError('')
+    start(async () => {
+      const res = await signIn(id)
+      if (res.ok) { router.replace('/'); router.refresh() }
+      else { setError(res.error || 'Sign-in failed. Try again.'); setChosen('') }
+    })
   }
 
   return (
     <div className="login-wrap">
-      <form className="card login-card" onSubmit={submit}>
-        <div className="card-head" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 8, display: 'flex' }}>
-          <LcgLogo height={26} />
-          <span className="card-title">🏓 LCG Ping Pong — Player Sign-in</span>
+      <div className="card login-card">
+        <div className="login-head">
+          <LcgLogo height={30} />
+          <span className="brand-chip">Ping Pong</span>
         </div>
         <div className="pad">
-          <p className="muted" style={{ fontSize: 12.5, marginTop: 0 }}>Viewing the ladder needs no sign-in. Pick your name to record your games — no password needed.</p>
-          <label className="card-title" style={{ display: 'block', margin: '12px 0 6px' }}>Your name</label>
-          <select className="field" style={{ width: '100%' }} value={profile} autoFocus onChange={(e) => setProfile(e.target.value)}>
-            {profiles.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
-          </select>
-          {error && <p style={{ color: 'var(--red)', fontSize: 12.5 }}>{error}</p>}
-          <button className="btn primary" style={{ width: '100%', marginTop: 16 }} disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
+          <h1 className="login-title">Who's playing?</h1>
+          <p className="login-sub">Tap your name to sign in. You'll be able to record games and post to the board. Anyone can view the rankings without signing in.</p>
+          <div className="login-grid">
+            {roster.map((p) => (
+              <button key={p.id} type="button" className={`rp-chip${chosen === p.id ? ' win' : ''}`} disabled={pending} onClick={() => pick(p.id)}>
+                <span className="nm">{p.name}</span>
+                {chosen === p.id && pending && <span className="rt">Signing in…</span>}
+              </button>
+            ))}
+          </div>
+          {error && <p className="form-error">{error}</p>}
+          <Link href="/" className="login-back">Back to rankings</Link>
         </div>
-      </form>
+      </div>
     </div>
   )
 }

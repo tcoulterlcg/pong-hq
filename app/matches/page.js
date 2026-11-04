@@ -1,13 +1,14 @@
-import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { getMatches, canDeleteMatches } from '../../lib/pingpong.mjs'
 import RemoveMatchButton from '../../components/RemoveMatchButton'
-import LcgLogo from '../../components/LcgLogo'
+import PageHead from '../../components/PageHead'
+import { dayKey } from '../../lib/period.mjs'
 
 export const dynamic = 'force-dynamic'
 export const metadata = { title: 'All Matches' }
 
-const fmtWhen = (iso) => new Date(iso).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' })
+const fmtTime = (iso) => new Date(iso).toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' })
+const fmtDay = (iso) => new Date(iso).toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'America/New_York' })
 
 export default async function Matches() {
   const ck = await cookies()
@@ -15,39 +16,40 @@ export default async function Matches() {
   const ruId = ck.get('ru')?.value
   const canDelete = authed && !!ruId && canDeleteMatches(ruId)
   const matches = await getMatches(100000) // every match ever
+  const days = []
+  for (const m of matches) {
+    const k = dayKey(m.at)
+    if (days[days.length - 1]?.key !== k) days.push({ key: k, label: fmtDay(m.at), matches: [] })
+    days[days.length - 1].matches.push(m)
+  }
 
   return (
-    <div className="wrap" style={{ maxWidth: 760 }}>
-      <div className="head">
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
-            <LcgLogo height={30} />
-            <span className="brand-chip">Ping Pong</span>
-          </div>
-          <h1>All <span className="accent">Matches</span></h1>
-          <div className="sub">every game ever recorded · newest first · Eastern time</div>
-        </div>
-        <div className="sub"><Link href="/">← Rankings board</Link></div>
-      </div>
+    <div className="wrap narrow">
+      <PageHead title="All" accent="Matches" sub={`${matches.length} ${matches.length === 1 ? 'match' : 'matches'} · Newest first · Eastern time`} />
 
-      <div className="card">
-        <div className="card-head">
-          <span className="card-title">Match History</span>
-          <span className="muted" style={{ fontSize: 11 }}>{matches.length} total</span>
+      {matches.length === 0 && <div className="card"><div className="pad"><p className="empty">No matches yet.</p></div></div>}
+      {days.map((d) => (
+        <div className="card section" key={d.key}>
+          <div className="card-head">
+            <span className="card-title">{d.label}</span>
+            <span className="head-meta">{d.matches.length} {d.matches.length === 1 ? 'match' : 'matches'}</span>
+          </div>
+          <div className="pad tight">
+            {d.matches.map((m) => (
+              <div className="item" key={m.id}>
+                <span className="item-main">
+                  <span><b>{m.winnerName}</b> def. {m.loserName}</span>
+                  <span className="muted when">{fmtTime(m.at)}</span>
+                </span>
+                <span className="item-end">
+                  <span className="num delta">{m.delta == null ? '' : `+${m.delta}`}</span>
+                  {canDelete && <RemoveMatchButton id={m.id} label={`${m.winnerName} def. ${m.loserName}${m.delta == null ? '' : ` (+${m.delta})`}`} />}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="pad" style={{ paddingTop: 6 }}>
-          {matches.length === 0 && <p className="muted" style={{ fontSize: 13 }}>No matches recorded yet.</p>}
-          {matches.map((m) => (
-            <div className="item" key={m.id}>
-              <span><b>{m.winnerName}</b> def. {m.loserName} <span className="muted" style={{ fontSize: 11 }}>· {fmtWhen(m.at)} · by {m.by}</span></span>
-              <span style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}>
-                <span className="num" style={{ color: 'var(--green)', fontWeight: 700 }}>{m.delta == null ? '' : `+${m.delta}`}</span>
-                {canDelete && <RemoveMatchButton id={m.id} label={`${m.winnerName} def. ${m.loserName}${m.delta == null ? '' : ` (+${m.delta})`}`} />}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+      ))}
     </div>
   )
 }

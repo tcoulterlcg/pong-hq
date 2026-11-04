@@ -3,7 +3,10 @@ import path from 'node:path'
 import Link from 'next/link'
 import { getStandings } from '../../lib/pingpong.mjs'
 import { rosterFor } from '../../lib/roster.mjs'
-import LcgLogo from '../../components/LcgLogo'
+import { getMatches } from '../../lib/pingpong.mjs'
+import { computeAllBadgeStats, topBadges } from '../../lib/badges.mjs'
+import PageHead from '../../components/PageHead'
+import Badges from '../../components/Badges'
 
 export const dynamic = 'force-dynamic' // stat strips ride the live ledger
 
@@ -12,31 +15,19 @@ export const metadata = { title: 'Players' }
 const medal = (r) => (r === 1 ? 'gold' : r === 2 ? 'silver' : r === 3 ? 'bronze' : '')
 
 export default async function Players() {
-  const standings = await getStandings()
+  const [standings, matches] = await Promise.all([getStandings(), getMatches(100000)])
+  const badgeStats = computeAllBadgeStats(standings, matches)
   const pub = path.join(process.cwd(), 'public', 'players')
   const cards = standings.map((p) => {
     // real photos (png) win over the generated cartoon portraits (svg)
-    const img = ['png', 'svg'].map((ext) => `${p.id}.${ext}`).find((f) => fs.existsSync(path.join(pub, f)))
+    const img = ['png', 'jpg', 'svg'].map((ext) => `${p.id}.${ext}`).find((f) => fs.existsSync(path.join(pub, f)))
     const meta = rosterFor(p.id)
-    return { ...p, fullName: meta.fullName || p.name, title: meta.title, img: img ? `/players/${img}` : null }
+    return { ...p, fullName: meta.fullName || p.name, title: meta.title, img: img ? `/players/${img}` : null, badges: topBadges(badgeStats.get(p.id), 6) }
   })
 
   return (
     <div className="wrap">
-      <div className="head">
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 6 }}>
-            <LcgLogo height={30} />
-            <span className="brand-chip">Ping Pong</span>
-          </div>
-          <h1>The <span className="accent">Players</span></h1>
-          <div className="sub">LCG Advisors office roster · card order follows the live rankings</div>
-        </div>
-        <div className="sub" style={{ display: 'flex', gap: 16 }}>
-          <Link href="/">← Rankings board</Link>
-          <Link href="/board">Message Board →</Link>
-        </div>
-      </div>
+      <PageHead title="The" accent="Players" sub="In ladder order. Tap a player for their stats." />
 
       <div className="players-grid">
         {cards.map((p) => (
@@ -54,8 +45,9 @@ export default async function Players() {
             <div className="player-stats num">
               <span className={`rank-chip ${medal(p.rank)}`}>{p.rank}</span>
               <span className="rating" style={{ fontSize: 15 }}>{p.rating}</span>
-              <span style={{ marginLeft: 'auto' }}><span style={{ color: 'var(--green)' }}>{p.wins}</span>–<span style={{ color: 'var(--red)' }}>{p.losses}</span></span>
+              <span style={{ marginLeft: 'auto' }}><span className="w">{p.wins}</span>–<span className="l">{p.losses}</span></span>
             </div>
+            {p.badges.length > 0 && <div className="player-badges"><Badges items={p.badges} /></div>}
           </Link>
         ))}
       </div>

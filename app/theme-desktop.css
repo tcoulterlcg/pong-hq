@@ -11,16 +11,6 @@
   /* ---------- Header ---------- */
   .head { align-items: center; padding: 30px 0 20px; }
   .head h1 { font-size: 30px; }
-  /* Players + Message Board now live in the dock */
-  .head .sub a[href="/players"], .head .sub a[href="#board"] { display: none; }
-  .head .sub a {
-    display: inline-flex; align-items: center; height: 38px; padding: 0 16px;
-    border-radius: 10px; border: 1px solid rgba(var(--ph-rgb), 0.38);
-    background: rgba(var(--ph-rgb), 0.08); color: var(--ph-bright);
-    font-weight: 600; font-size: 13px; letter-spacing: 0.04em;
-    transition: background 0.15s, border-color 0.15s;
-  }
-  .head .sub a:hover { background: rgba(var(--ph-rgb), 0.18); border-color: rgba(var(--ph-rgb), 0.7); color: #fff; }
 
   /* ---------- Stat cards: one glass card, three columns ---------- */
   .stat-tiles {
