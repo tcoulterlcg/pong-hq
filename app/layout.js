@@ -1,5 +1,6 @@
 import './globals.css'
 import './theme.css'
+import './theme-mobile.css'
 import { Inter, Michroma, IBM_Plex_Sans } from 'next/font/google'
 import PongGalaxy from '../components/PongGalaxy'
 import MobileNav from '../components/MobileNav'
