@@ -2,12 +2,10 @@
 
 import { useEffect, useRef } from 'react'
 
-/* Animated galaxy background, same feel as Command Center: drifting navy
-   nebula clouds and three layers of twinkling stars. The shooting stars are
-   ping pong balls — a glowing ball on a gentle arc with a fading trail, now
-   and then bouncing once off an invisible table.
-   Sits fixed behind every page. Pauses when the tab is hidden and draws a
-   still frame for people who prefer reduced motion. */
+/* Animated galaxy background (Command Center style): drifting navy nebula
+   clouds, three layers of twinkling stars, regular meteors, and ping pong
+   ball meteors on the same diagonal that bounce once off an invisible table.
+   Pauses when the tab is hidden; still frame for reduced motion. */
 
 const LAYERS = [
   { speed: 0.006, size: 0.6 },
@@ -16,8 +14,8 @@ const LAYERS = [
 ]
 
 const BALL_COLORS = [
-  { core: '255, 255, 255', glow: '214, 228, 255' }, // white ball
-  { core: '255, 176, 92', glow: '255, 150, 60' }, // orange ball
+  { core: '255, 255, 255', glow: '214, 228, 255' },
+  { core: '255, 176, 92', glow: '255, 150, 60' },
 ]
 
 export default function PongGalaxy() {
@@ -36,6 +34,7 @@ export default function PongGalaxy() {
     let dpr = 1
     let stars = []
     let clouds = []
+    const shots = []
     const balls = []
     let raf = 0
     let last = performance.now()
@@ -121,17 +120,51 @@ export default function PongGalaxy() {
       }
     }
 
+    // Regular meteors, same as Command Center: thin white streaks, top-right to bottom-left.
+    function drawShots(dt) {
+      if (Math.random() < 0.0004 * dt && shots.length < 2) {
+        const fromTop = Math.random() < 0.5
+        shots.push({
+          x: fromTop ? Math.random() * w : w + 20,
+          y: fromTop ? -20 : Math.random() * h * 0.5,
+          vx: -(0.6 + Math.random() * 0.5),
+          vy: 0.25 + Math.random() * 0.25,
+          life: 0,
+          max: 900 + Math.random() * 600,
+        })
+      }
+      for (let i = shots.length - 1; i >= 0; i--) {
+        const s = shots[i]
+        s.life += dt
+        s.x += s.vx * dt
+        s.y += s.vy * dt
+        const k = 1 - s.life / s.max
+        if (k <= 0) { shots.splice(i, 1); continue }
+        const tail = 120
+        const g = ctx.createLinearGradient(s.x, s.y, s.x - s.vx * tail, s.y - s.vy * tail)
+        g.addColorStop(0, `rgba(255, 255, 255, ${0.6 * k})`)
+        g.addColorStop(1, 'rgba(200, 205, 215, 0)')
+        ctx.strokeStyle = g
+        ctx.lineWidth = 1.1
+        ctx.lineCap = 'round'
+        ctx.beginPath()
+        ctx.moveTo(s.x, s.y)
+        ctx.lineTo(s.x - s.vx * tail, s.y - s.vy * tail)
+        ctx.stroke()
+      }
+    }
+
+    // Pong meteors: same diagonal as the regular ones, a touch slower, one bounce.
     function launchBall() {
-      const leftToRight = Math.random() < 0.5
-      const speed = 0.35 + Math.random() * 0.25 // px per ms
+      const fromTop = Math.random() < 0.5
       const r = 3.2 + Math.random() * 2.2
       balls.push({
-        x: leftToRight ? -20 : w + 20,
-        y: h * (0.08 + Math.random() * 0.4),
-        vx: leftToRight ? speed : -speed,
-        vy: -(0.05 + Math.random() * 0.12),
-        g: 0.00022 + Math.random() * 0.00012, // gentle gravity for the arc
-        floor: h * (0.7 + Math.random() * 0.22), // the "table" it may bounce on
+        x: fromTop ? w * (0.3 + Math.random() * 0.7) : w + 20,
+        y: fromTop ? -20 : Math.random() * h * 0.45,
+        vx: -(0.4 + Math.random() * 0.3),
+        vy: 0.17 + Math.random() * 0.17,
+        g: 0.00006,
+        floor: h * (0.72 + Math.random() * 0.2),
         bounced: false,
         r,
         spin: Math.random() * Math.PI * 2,
@@ -166,8 +199,6 @@ export default function PongGalaxy() {
           continue
         }
         const fade = Math.min(1, b.life / 250)
-
-        // fading trail
         for (let j = 1; j < b.trail.length; j++) {
           const p0 = b.trail[j - 1]
           const p1 = b.trail[j]
@@ -180,8 +211,6 @@ export default function PongGalaxy() {
           ctx.lineTo(p1.x, p1.y)
           ctx.stroke()
         }
-
-        // glow
         const glow = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r * 4.5)
         glow.addColorStop(0, `rgba(${b.color.glow}, ${0.55 * fade})`)
         glow.addColorStop(1, `rgba(${b.color.glow}, 0)`)
@@ -189,8 +218,6 @@ export default function PongGalaxy() {
         ctx.beginPath()
         ctx.arc(b.x, b.y, b.r * 4.5, 0, Math.PI * 2)
         ctx.fill()
-
-        // the ball, with a highlight and a spinning seam
         const ball = ctx.createRadialGradient(b.x - b.r * 0.35, b.y - b.r * 0.35, b.r * 0.1, b.x, b.y, b.r)
         ball.addColorStop(0, `rgba(255, 255, 255, ${fade})`)
         ball.addColorStop(1, `rgba(${b.color.core}, ${fade})`)
@@ -210,18 +237,16 @@ export default function PongGalaxy() {
       const dt = Math.min(64, now - last)
       last = now
       t += dt
-
       ctx.fillStyle = '#000'
       ctx.fillRect(0, 0, w, h)
       drawClouds()
       drawStars(dt)
+      if (!still) drawShots(dt)
       if (!still) drawBalls(dt)
-
       if (!still) raf = requestAnimationFrame(frame)
     }
 
     function onResize() {
-      // Phones resize when the address bar slides; only rebuild the sky when the width changes.
       if (window.innerWidth !== builtW) build()
       else size()
       if (still) frame(performance.now())
